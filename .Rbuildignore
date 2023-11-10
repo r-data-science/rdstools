@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^data-raw$
+^_dev$
+^codecov\.yml$
+.github
+^\.github$
+^\.lintr$
+^hcatools\.Rcheck$
+^hcatools.*\.tar\.gz$
+^hcatools.*\.tgz$
