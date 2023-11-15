@@ -251,7 +251,7 @@ read_logs <- function(detail_parse = TRUE, detail_sep = "|", lf = NULL) {
   log_cols <- c("Level", "TimestampUTC", "Message", "Detail")
 
   if (!is.null(lf)) {
-    if (file_exists(lf)) {
+    if (fs::file_exists(lf)) {
 
       tmp <- str_trim(readLines(lf), "right")
       lines <- tmp[str_which(tmp, "^OPEN"):length(tmp)]
