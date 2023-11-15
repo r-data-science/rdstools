@@ -1,14 +1,12 @@
 on:
   push:
-    branches: [master, main, develop]
-  pull_request:
-    branches: [master, main, develop]
+    branches: [main, develop]
 
 name: Test-Coverage
 
 jobs:
   Test-Coverage:
-    runs-on: self-hosted
+    runs-on: ubuntu-22.04
 
     timeout-minutes: 40
     env:
@@ -22,11 +20,6 @@ jobs:
 
       - name: Query dependencies
         run: |
-          options(repos = c(
-            "CRAN"         = "https://cabbage.tools:4243/prod-cran/latest/",
-            "prod-git"     = "https://cabbage.tools:4243/prod-git/latest/",
-            "dev-git"      = "https://cabbage.tools:4243/dev-git/latest/"
-            ))
           install.packages("remotes")
           install.packages("covr")
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
