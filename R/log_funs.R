@@ -18,9 +18,6 @@
 #' bgBlue italic has_color strip_style bgGreen green bgBlack
 #' @importFrom stringr str_trim str_glue str_split str_c str_pad str_remove_all
 #' str_replace_all str_which str_escape str_remove fixed str_subset
-#' @importFrom fs file_create file_exists dir_create path file_temp path_ext
-#' path_file file_chmod is_file_empty
-#' @importFrom jsonlite toJSON prettify unbox
 #'
 #' @examples
 #' log_err(msg = "My error Message", add = "Error information from R")
@@ -57,6 +54,13 @@ log_header <- function() {
 #' @describeIn log_funs open log
 #' @export
 open_log <- function(fnam = NULL, jobId = NULL) {
+  if (!requireNamespace("fs", quietly = TRUE)) {
+    stop("Logging requires package 'fs'", call. = FALSE)
+  }
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+    stop("Logging requires package 'jsonlite'", call. = FALSE)
+  }
+
   jobId[is.null(jobId)] <- ""
   ldir <- fs::dir_create(fs::path(getwd(), "log", jobId))
   if (is.null(fnam))
@@ -84,6 +88,10 @@ open_log <- function(fnam = NULL, jobId = NULL) {
 #' @describeIn log_funs close log
 #' @export
 close_log <- function(gather = TRUE, ...) {
+  if (!requireNamespace("fs", quietly = TRUE)) {
+    stop("Logging requires package 'fs'", call. = FALSE)
+  }
+
   if (!e$log_is_active) {
     warning("No active log file to close")
   } else {

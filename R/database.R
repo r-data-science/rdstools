@@ -5,19 +5,27 @@
 #' @param conn_string Optional. Given priority when provided
 #' @param cn connection object to close
 #'
-#' @importFrom DBI dbConnect dbDisconnect
-#' @importFrom fs path_package path_ext
-#' @importFrom yaml yaml.load_file
-#' @importFrom RPostgres Postgres
-#'
 #' @return connection
 #'
 #' @name database
 NULL
 
+
+
 #' @describeIn database connect
 #' @export
 dbc <- function(cfg = NULL, dbin = NULL, conn_string = NULL) {
+  ## Check For Deps
+  if (!requireNamespace("DBI", quietly = TRUE)) {
+    stop("'DBI' not available", call. = FALSE)
+  } else if (!requireNamespace("fs", quietly = TRUE)) {
+    stop("'fs' not available", call. = FALSE)
+  } else if (!requireNamespace("yaml", quietly = TRUE)) {
+    stop("'yaml' not available", call. = FALSE)
+  } else if (!requireNamespace("RPostgres", quietly = TRUE)) {
+    stop("'RPostgres' not available", call. = FALSE)
+  }
+
   if (!is.null(conn_string)) {
     args <- strsplit(strsplit(conn_string, ";")[[1]], "=")
     vals <- lapply(args, `[`, 2)
@@ -32,14 +40,18 @@ dbc <- function(cfg = NULL, dbin = NULL, conn_string = NULL) {
 
 #' @describeIn database disconnect
 #' @export
-dbd <- function(cn) DBI::dbDisconnect(cn)
+dbd <- function(cn) {
+  if (!requireNamespace("DBI", quietly = TRUE)) {
+    stop("'DBI' not available", call. = FALSE)
+  }
+  DBI::dbDisconnect(cn)
+}
 
 #' @describeIn database TBD
-#' @export
 ld_odbc <- function(cfg, dbin) {
   cfg <- match.arg(cfg, c("prod2", "dev2")) # make sure cfg matches one
   xdfp <- function(fn) {
-    fs::path_package("hcatools", "extdata", fs::path_ext(fn), fn)
+    fs::path_package("rdtools", "extdata", fs::path_ext(fn), fn)
   }
 
   ## load db connection parameters

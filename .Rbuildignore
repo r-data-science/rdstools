@@ -6,6 +6,6 @@
 .github
 ^\.github$
 ^\.lintr$
-^hcatools\.Rcheck$
-^hcatools.*\.tar\.gz$
-^hcatools.*\.tgz$
+^rdtools\.Rcheck$
+^rdtools.*\.tar\.gz$
+^rdtools.*\.tgz$

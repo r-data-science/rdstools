@@ -1,3 +1,3 @@
 library("testthat")
 
-test_check("hcatools")
+test_check("rdtools")
