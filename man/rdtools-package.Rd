@@ -6,8 +6,6 @@
 \alias{rdtools-package}
 \title{rdtools: DB Connection & Logging}
 \description{
-\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
-
 Minimal package containing common tools used internally.
 }
 \seealso{

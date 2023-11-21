@@ -6,4 +6,3 @@
 [![Test-Coverage](https://github.com/r-data-science/rdtools/actions/workflows/Test-Coverage.yaml/badge.svg)](https://github.com/r-data-science/rdtools/actions/workflows/Test-Coverage.yaml)
 <!-- badges: end -->
 
-\*Proprietary - Do Not Distribute\*

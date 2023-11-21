@@ -9,3 +9,4 @@
 ^rdtools\.Rcheck$
 ^rdtools.*\.tar\.gz$
 ^rdtools.*\.tgz$
+^LICENSE\.md$
