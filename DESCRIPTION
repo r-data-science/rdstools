@@ -16,16 +16,22 @@ Config/testthat/edition: 3
 Imports:
     crayon,
     data.table,
+    DBI,
     stringr
 Depends: 
     R (>= 4.0)
 Suggests:
     covr,
     R.utils,
-    DBI,
     fs,
     jsonlite,
     RPostgres,
     yaml,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    openai,
+    showtext,
+    sysfonts,
+    ggplot2,
+    ggpath,
+    cropcircles
 License: GPL (>= 3)
