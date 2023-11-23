@@ -120,9 +120,7 @@ close_log <- function(gather = TRUE, ...) {
 
 #' @describeIn log_funs Internal function for logging
 hcalog <- function(level = c("e", "i", "w", "s", "o", "c"), ...) {
-
-  ts <- Sys.time()
-
+  ts <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
   if (level == "o") {
     LEV <- bgBlack(white('OPEN'))
     TST <- blue(as.character(ts))
