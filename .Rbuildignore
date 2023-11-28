@@ -10,3 +10,4 @@
 ^rdstools.*\.tar\.gz$
 ^rdstools.*\.tgz$
 ^LICENSE\.md$
+^cran-comments\.md$
