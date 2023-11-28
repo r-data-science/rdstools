@@ -5,8 +5,7 @@
 \alias{log_header}
 \alias{open_log}
 \alias{close_log}
-\alias{hcalog}
-\alias{glue_txt}
+\alias{..log}
 \alias{log_ini}
 \alias{log_end}
 \alias{log_err}
@@ -22,9 +21,7 @@ open_log(fnam = NULL, jobId = NULL)
 
 close_log(gather = TRUE, ...)
 
-hcalog(level = c("e", "i", "w", "s", "o", "c"), ...)
-
-glue_txt(x)
+..log(level = c("e", "i", "w", "s", "o", "c"), ...)
 
 log_ini(msg = NULL, add = NULL)
 
@@ -51,8 +48,6 @@ read_logs(detail_parse = TRUE, detail_sep = "|", lf = NULL)
 
 \item{level}{param for internal function ..log}
 
-\item{x}{(internal) text to glue}
-
 \item{msg}{Main log message}
 
 \item{add}{Additional details, typically a message from R}
@@ -63,6 +58,8 @@ read_logs(detail_parse = TRUE, detail_sep = "|", lf = NULL)
 separater (if detail_parse arg is TRUE)}
 
 \item{lf}{log file name}
+
+\item{x}{(internal) text to glue}
 }
 \description{
 Log Messages
@@ -75,9 +72,7 @@ Log Messages
 
 \item \code{close_log()}: close log
 
-\item \code{hcalog()}: Internal function for logging
-
-\item \code{glue_txt()}: helper to glue text
+\item \code{..log()}: Internal function for logging
 
 \item \code{log_ini()}: Log errors
 

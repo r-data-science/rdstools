@@ -1,12 +1,12 @@
 Package: rdstools
-Title: DB Connection & Logging
-Version: 1.0.4
+Title: Logging & Dev Helpers
+Version: 0.0.4
 Authors@R: 
     person(given = "Bobby",
            family = "Fatemi",
            role = c("aut", "cre"),
            email = "bfatemi07@gmail.com")
-Description: Minimal package containing common tools used internally.
+Description: Minimal package containing common tools used for logging and development.
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
@@ -16,22 +16,10 @@ Config/testthat/edition: 3
 Imports:
     crayon,
     data.table,
-    DBI,
     stringr
 Depends: 
     R (>= 4.0)
 Suggests:
     covr,
-    R.utils,
-    fs,
-    jsonlite,
-    RPostgres,
-    yaml,
-    testthat (>= 3.0.0),
-    openai,
-    showtext,
-    sysfonts,
-    ggplot2,
-    ggpath,
-    cropcircles
+    testthat
 License: GPL (>= 3)

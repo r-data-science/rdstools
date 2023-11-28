@@ -13,6 +13,7 @@
 #' separater (if detail_parse arg is TRUE)
 #' @param ... additional arguments to pass to read_logs
 #' @param x (internal) text to glue
+#'
 #' @importFrom data.table setkey setnames as.data.table transpose
 #' @importFrom crayon bgRed white red bold bgYellow yellow blue cyan silver
 #' bgBlue italic has_color strip_style bgGreen green bgBlack
@@ -38,14 +39,13 @@ e$log_file_path <- NULL
 
 #' @describeIn log_funs get log header
 log_header <- function() {
+  if (!requireNamespace("jsonlite", quietly = TRUE))
+    stop("Logging requires package 'jsonlite'", call. = FALSE)
   hd_brdr <- stringr::str_pad("#", pad = "=", side = "right", width = 65)
-  tmp1 <- jsonlite::toJSON(as.list(Sys.info()), pretty = TRUE,
-                           auto_unbox = TRUE)
+  tmp1 <- jsonlite::toJSON(as.list(Sys.info()), pretty = TRUE, auto_unbox = TRUE)
   tmp2 <- jsonlite::unbox(jsonlite::prettify(tmp1, 3))
-  tmp3 <- stringr::str_trim(
-    stringr::str_remove_all(tmp2, "\\{|\n\\}\n"), "left")
-  hd_body <- stringr::str_c("#   ",
-                            stringr::str_replace_all(tmp3, "\n", "\n#"))
+  tmp3 <- stringr::str_trim(stringr::str_remove_all(tmp2, "\\{|\n\\}\n"), "left")
+  hd_body <- stringr::str_c("#   ", stringr::str_replace_all(tmp3, "\n", "\n#"))
   log_hdr <- stringr::str_c(hd_brdr, "\n", hd_body, "\n", hd_brdr, "\n")
   return(log_hdr)
 }
@@ -54,12 +54,10 @@ log_header <- function() {
 #' @describeIn log_funs open log
 #' @export
 open_log <- function(fnam = NULL, jobId = NULL) {
-  if (!requireNamespace("fs", quietly = TRUE)) {
+  if (!requireNamespace("fs", quietly = TRUE))
     stop("Logging requires package 'fs'", call. = FALSE)
-  }
-  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+  if (!requireNamespace("jsonlite", quietly = TRUE))
     stop("Logging requires package 'jsonlite'", call. = FALSE)
-  }
 
   jobId[is.null(jobId)] <- ""
   ldir <- fs::dir_create(fs::path(getwd(), "log", jobId))
@@ -88,9 +86,8 @@ open_log <- function(fnam = NULL, jobId = NULL) {
 #' @describeIn log_funs close log
 #' @export
 close_log <- function(gather = TRUE, ...) {
-  if (!requireNamespace("fs", quietly = TRUE)) {
+  if (!requireNamespace("fs", quietly = TRUE))
     stop("Logging requires package 'fs'", call. = FALSE)
-  }
 
   if (!e$log_is_active) {
     warning("No active log file to close")
@@ -99,14 +96,9 @@ close_log <- function(gather = TRUE, ...) {
     log_end("Log File Closed", e$log_file_path)
 
     ## change file permissions to read only
-    fp <- fs::file_chmod(e$log_file_path, "a=r")
-
-    if (gather) {
-      out <- setkey(read_logs(...), Level)[
-        !c("OPEN", "CLOSE")][order(TimestampUTC)][]
-    } else {
-      out <- fp
-    }
+    out <- fs::file_chmod(e$log_file_path, "a=r")
+    if (gather)
+      out <- setkey(read_logs(...), Level)[!c("OPEN", "CLOSE")][order(TimestampUTC)][]
 
     e$log_is_active <- FALSE
     e$log_dir_path <- NULL
@@ -119,7 +111,7 @@ close_log <- function(gather = TRUE, ...) {
 }
 
 #' @describeIn log_funs Internal function for logging
-hcalog <- function(level = c("e", "i", "w", "s", "o", "c"), ...) {
+..log <- function(level = c("e", "i", "w", "s", "o", "c"), ...) {
   ts <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
   if (level == "o") {
     LEV <- bgBlack(white('OPEN'))
@@ -194,56 +186,47 @@ hcalog <- function(level = c("e", "i", "w", "s", "o", "c"), ...) {
   return(invisible(lf))
 }
 
-#' @describeIn log_funs helper to glue text
-glue_txt <- function(x) {
-  x <- stringr::str_glue(x)
-  if (length(x) == 0) x <- NULL
-  x
-}
 
 #' @describeIn log_funs Log errors
 log_ini <- function(msg = NULL, add = NULL) {
-  hcalog(level = "o", glue_txt(msg), glue_txt(add),
-         e$log_file_path, echo = TRUE)
+  ..log(level = "o", msg, add, e$log_file_path, echo = TRUE)
 }
 
 #' @describeIn log_funs Log errors
 log_end <- function(msg = NULL, add = NULL) {
-  hcalog(level = "c", glue_txt(msg), glue_txt(add),
-         e$log_file_path, echo = TRUE)
+  ..log(level = "c", msg, add, e$log_file_path, echo = TRUE)
 }
 
 #' @describeIn log_funs Log errors
 #' @export
 log_err <- function(msg = NULL, add = NULL) {
-  hcalog(level = "e", glue_txt(msg), glue_txt(add),
-         e$log_file_path, echo = TRUE)
+  ..log(level = "e", msg, add, e$log_file_path, echo = TRUE)
 }
 
 #' @describeIn log_funs Log warning
 #' @export
 log_wrn <- function(msg = NULL, add = NULL) {
-  hcalog(level = "w", glue_txt(msg), glue_txt(add),
-         e$log_file_path, echo = TRUE)
+  ..log(level = "w", msg, add, e$log_file_path, echo = TRUE)
 }
 
 #' @describeIn log_funs Log success
 #' @export
 log_suc <- function(msg = NULL, add = NULL) {
-  hcalog(level = "s", glue_txt(msg), glue_txt(add),
-         e$log_file_path, echo = TRUE)
+  ..log(level = "s", msg, add, e$log_file_path, echo = TRUE)
 }
 
 #' @describeIn log_funs Log info
 #' @export
 log_inf <- function(msg = NULL, add = NULL) {
-  hcalog(level = "i", glue_txt(msg), glue_txt(add),
-         e$log_file_path, echo = TRUE)
+  ..log(level = "i", msg, add, e$log_file_path, echo = TRUE)
 }
 
 #' @describeIn log_funs Log errors
 #' @export
 read_logs <- function(detail_parse = TRUE, detail_sep = "|", lf = NULL) {
+  if (!requireNamespace("fs", quietly = TRUE))
+    stop("Logging requires package 'fs'", call. = FALSE)
+
   lf[is.null(lf)] <- e$log_file_path
 
   log_cols <- c("Level", "TimestampUTC", "Message", "Detail")
@@ -251,29 +234,24 @@ read_logs <- function(detail_parse = TRUE, detail_sep = "|", lf = NULL) {
   if (!is.null(lf)) {
     if (fs::file_exists(lf)) {
 
-      tmp <- str_trim(readLines(lf), "right")
-      lines <- tmp[str_which(tmp, "^OPEN"):length(tmp)]
+      tmp <- stringr::str_trim(readLines(lf), "right")
+      lines <- tmp[stringr::str_which(tmp, "^OPEN"):length(tmp)]
 
       OUT <- setkey(setnames(
-        as.data.table(str_split(lines, "\\|", n = 4, simplify = TRUE)),
+        as.data.table(stringr::str_split(lines, "\\|", n = 4, simplify = TRUE)),
         log_cols
       )[, TimestampUTC := as.POSIXct(TimestampUTC)], TimestampUTC)
 
       if (detail_parse) {
-        OUT[, Detail := str_remove(Detail, "<(?<=\\<).+(?=\\>)> ")]
-        OUT <- OUT[, c(.SD[, !"Detail"],
-                       transpose(str_split(Detail, fixed(detail_sep))))]
+        OUT[, Detail := stringr::str_remove(Detail, "<(?<=\\<).+(?=\\>)> ")]
+        OUT <- OUT[, c(.SD[, !"Detail"], transpose(stringr::str_split(Detail, stringr::fixed(detail_sep))))]
         setnames(OUT, 1:4, log_cols)
-        setnames(OUT, c(
-          log_cols,
-          str_c("Detail.", seq_along(str_subset(names(OUT), "^V")))))
+        setnames(OUT, c(log_cols, stringr::str_c("Detail.", seq_along(stringr::str_subset(names(OUT), "^V")))))
       }
-
     } else {
       stop("Unable to locate log: ", lf, call. = FALSE)
     }
     return(OUT[])
-
   } else {
     stop("log file path not found")
   }
