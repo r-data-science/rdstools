@@ -54,12 +54,9 @@ read_logs(detail_parse = TRUE, detail_sep = "|", lf = NULL)
 
 \item{detail_parse}{if TRUE, will parse the details column in the logs}
 
-\item{detail_sep}{Used to split the details column by
-separater (if detail_parse arg is TRUE)}
+\item{detail_sep}{Used to split the details column by separater (if detail_parse arg is TRUE)}
 
 \item{lf}{log file name}
-
-\item{x}{(internal) text to glue}
 }
 \description{
 Log Messages

@@ -9,16 +9,12 @@
 #' @param jobId optional job number to group a set of log files
 #' @param lf log file name
 #' @param detail_parse if TRUE, will parse the details column in the logs
-#' @param detail_sep Used to split the details column by
-#' separater (if detail_parse arg is TRUE)
+#' @param detail_sep Used to split the details column by separater (if detail_parse arg is TRUE)
 #' @param ... additional arguments to pass to read_logs
-#' @param x (internal) text to glue
 #'
-#' @importFrom data.table setkey setnames as.data.table transpose
-#' @importFrom crayon bgRed white red bold bgYellow yellow blue cyan silver
-#' bgBlue italic has_color strip_style bgGreen green bgBlack
-#' @importFrom stringr str_trim str_glue str_split str_c str_pad str_remove_all
-#' str_replace_all str_which str_escape str_remove fixed str_subset
+#' @import stringr
+#' @import crayon
+#' @import data.table
 #'
 #' @examples
 #' log_err(msg = "My error Message", add = "Error information from R")
@@ -26,8 +22,6 @@
 #'
 #' @name log_funs
 NULL
-
-globalVariables(c("Detail", "Level", "TimestampUTC"))
 
 e <- new.env()
 e$log_is_active <- FALSE

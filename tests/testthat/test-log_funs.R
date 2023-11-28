@@ -1,5 +1,6 @@
 library(fs)
 library(R.utils)
+library(jsonlite)
 
 clear_logs <- function() {
   if (fs::dir_exists("log")) {
@@ -12,7 +13,7 @@ clear_logs <- function() {
 test_that("Logging works!", {
 
   fp <- fs::file_create("test.log")
-  x <- hcalog(level = "e", "message", "add", lf = fp, TRUE)
+  x <- ..log(level = "e", "message", "add", lf = fp, TRUE)
   expect_true(fs::file_exists(x))
   fs::file_delete("test.log")
 

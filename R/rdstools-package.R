@@ -13,3 +13,6 @@
 #' @importFrom data.table data.table
 ## usethis namespace: end
 NULL
+
+
+globalVariables(c("Detail", "Level", "TimestampUTC"))
