@@ -1,3 +1,3 @@
 library("testthat")
 
-test_check("rdtools")
+test_check("rdstools")

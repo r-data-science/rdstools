@@ -6,7 +6,7 @@
 .github
 ^\.github$
 ^\.lintr$
-^rdtools\.Rcheck$
-^rdtools.*\.tar\.gz$
-^rdtools.*\.tgz$
+^rdstools\.Rcheck$
+^rdstools.*\.tar\.gz$
+^rdstools.*\.tgz$
 ^LICENSE\.md$

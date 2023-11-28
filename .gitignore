@@ -43,6 +43,6 @@ docs/
 
 # translation temp files
 po/*~
-rdtools.Rcheck/
-rdtools*.tar.gz
-rdtools*.tgz
+rdstools.Rcheck/
+rdstools*.tar.gz
+rdstools*.tgz
