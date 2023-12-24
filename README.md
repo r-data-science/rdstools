@@ -1,4 +1,5 @@
-# rdstools
+# rdstools <img src="man/figures/logo.png" align="right" height="120" alt="" />
+
 
 <!-- badges: start -->
 [![codecov](https://codecov.io/gh/r-data-science/rdstools/graph/badge.svg?token=UKHBPWV97R)](https://codecov.io/gh/r-data-science/rdstools)
