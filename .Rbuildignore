@@ -1,0 +1,14 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^data-raw$
+^_dev$
+^codecov\.yml$
+.github
+^\.github$
+^\.lintr$
+^rdstools\.Rcheck$
+^rdstools.*\.tar\.gz$
+^rdstools.*\.tgz$
+^LICENSE\.md$
+^cran-comments\.md$
+^CRAN-SUBMISSION$
