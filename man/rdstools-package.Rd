@@ -4,11 +4,11 @@
 \name{rdstools-package}
 \alias{rdstools}
 \alias{rdstools-package}
-\title{rdstools: Logging & Dev Helpers}
+\title{rdstools: Data Science Development}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Minimal package containing common tools used for logging and development.
+Minimal package containing common tools used for logging and development of data science applications and pipelines.
 }
 \seealso{
 Useful links:

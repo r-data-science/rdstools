@@ -122,25 +122,25 @@ close_log <- function(gather = TRUE, ...) {
   if (level == "e") {
     LEV <- bgRed(white('ERROR'))
     TST <- red(as.character(ts))
-    RLG <- bold(red('<RError>'))
+    RLG <- bold(red('<error>'))
   }
 
   if (level == "w") {
     LEV <- bgYellow(white('WARNING'))
     TST <- yellow(bold(as.character(ts)))
-    RLG <- bold(yellow('<RWarn>'))
+    RLG <- bold(yellow('<warn>'))
   }
 
   if (level == "i") {
     LEV <- bgBlue(white('INFO'))
     TST <- blue(bold(as.character(ts)))
-    RLG <- bold(blue('<RInfo>'))
+    RLG <- bold(blue('<info>'))
   }
 
   if (level == "s") {
     LEV <- bgGreen(white('SUCCESS'))
     TST <- green(bold(as.character(ts)))
-    RLG <- bold(green('<RSuccess>'))
+    RLG <- bold(green('<succ>'))
   }
 
   ARG <- list(...)
@@ -153,8 +153,8 @@ close_log <- function(gather = TRUE, ...) {
   if (!is.null(add) & is.null(msg))
     stop("Arg 'msg' is required when 'add' is given")
 
-  if (!is.null(msg)) msg <- str_c(msg, collapse = " ")
-  if (!is.null(add)) add <- str_c(add, collapse = " ")
+  if (!is.null(msg)) msg <- str_c(as.character(msg), collapse = " ")
+  if (!is.null(add)) add <- str_c(as.character(add), collapse = " ")
 
   MSG <- cyan(italic(msg))
   ADD <- cyan(italic(add))
