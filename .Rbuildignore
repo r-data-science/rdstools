@@ -1,7 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
-^_dev$
 ^codecov\.yml$
 .github
 ^\.github$
@@ -12,3 +11,4 @@
 ^LICENSE\.md$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^R/\.dev$

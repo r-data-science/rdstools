@@ -9,6 +9,7 @@
   par_env <- parent.frame()
   G <- par_env$`.GRP` - 1
   NG <- par_env$`.NGRP`
-  if (G %% n == 0)
+  if (G %% n == 0) {
     cat("progress...", paste0(round(G / NG, 2) * 100, "%"), "\n")
+  }
 }

@@ -4,7 +4,8 @@
 #'
 #' @param cn connection object
 #' @param qry query to iterate and fetch until completion
-#' @param n total rows to get in each iteration. If NULL (default) then value to be used is 1M
+#' @param n total rows to get in each iteration. If NULL (default) then value
+#' to be used is 1M
 #'
 #' @importFrom data.table setDT rbindlist
 #' @importFrom DBI dbSendQuery dbClearResult dbFetch dbHasCompleted
@@ -14,7 +15,8 @@
 #' @name database_utils
 NULL
 
-#' @describeIn database_utils internal function to iterate a query over a connection
+#' @describeIn database_utils internal function to iterate a query
+#' over a connection
 #' @export
 dbQueryFetch <- function(cn, qry, n = NULL) {
   n <- ifelse(is.null(n), 10^6, n)

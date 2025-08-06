@@ -3,17 +3,19 @@ doc.data.table <- function(DT,
                            title = NULL,
                            descr = NULL,
                            src = NULL) {
-
   # Validate argument dataset
-  if (!is.data.table(DT))
+  if (!is.data.table(DT)) {
     stop("Argument DT is not a data.table", call. = FALSE)
+  }
 
   if (!is.null(name)) {
     # valid name consists of only letters/numbers, and can include underscores
-    # Additionally, name must start with a letter and ends with a letter or number
+    # Additionally, name must start with a letter and ends with a letter
+    # or number
     pat <- "(?=^[A-Za-z])[A-Za-z0-9_]+(?<=[A-Za-z0-9])$"
-    if (!str_detect(name, pat))
+    if (!str_detect(name, pat)) {
       stop("Name of dataset has invalid characters")
+    }
   }
 
   # Replace null args with helpful placeholder text
@@ -25,7 +27,10 @@ doc.data.table <- function(DT,
 
   gl <- function(txt) {
     env <- parent.frame(1)
-    glue::glue(txt, .open = "%", .close = "%", .null = "<PLACEHOLDER>", .envir = env)
+    glue::glue(txt,
+      .open = "%", .close = "%",
+      .null = "<PLACEHOLDER>", .envir = env
+    )
   }
 
   # Get header of documentation
