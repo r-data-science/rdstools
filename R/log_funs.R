@@ -9,7 +9,7 @@
 #' @param jobId optional job number to group a set of log files
 #' @param lf log file name
 #' @param detail_parse if TRUE, will parse the details column in the logs
-#' @param detail_sep Used to split the details column by separater (if detail_parse arg is TRUE)
+#' @param detail_sep Used to split the details column by separator (if `detail_parse` is TRUE)
 #' @param ... additional arguments to pass to read_logs
 #'
 #' @import stringr
@@ -53,11 +53,17 @@ open_log <- function(fnam = NULL, jobId = NULL) {
   if (!requireNamespace("jsonlite", quietly = TRUE))
     stop("Logging requires package 'jsonlite'", call. = FALSE)
 
-  jobId[is.null(jobId)] <- ""
-  ldir <- fs::dir_create(fs::path(getwd(), "log", jobId))
-  if (is.null(fnam))
+  # Ensure jobId is a character string
+  if (is.null(jobId)) jobId <- ""
+  # Create log directory under the session temp directory to satisfy CRAN policy
+  # Use a dedicated subdirectory ("rdstools_logs") to avoid cluttering tempdir()
+  ldir <- fs::dir_create(fs::path(tempdir(), "rdstools_logs", jobId))
+  # Determine log file name: if unspecified, create a temporary file within ldir
+  if (is.null(fnam)) {
     fnam <- fs::path_file(fs::file_temp("log", tmp_dir = ldir))
+  }
   fnam <- as.character(fnam)
+  # Ensure file has .log extension
   fs::path_ext(fnam) <- ".log"
 
   ## set internal environ params
@@ -181,17 +187,17 @@ close_log <- function(gather = TRUE, ...) {
 }
 
 
-#' @describeIn log_funs Log errors
+#' @describeIn log_funs Log initiation (open)
 log_ini <- function(msg = NULL, add = NULL) {
   ..log(level = "o", msg, add, e$log_file_path, echo = TRUE)
 }
 
-#' @describeIn log_funs Log errors
+#' @describeIn log_funs Log closure
 log_end <- function(msg = NULL, add = NULL) {
   ..log(level = "c", msg, add, e$log_file_path, echo = TRUE)
 }
 
-#' @describeIn log_funs Log errors
+#' @describeIn log_funs Log error messages
 #' @export
 log_err <- function(msg = NULL, add = NULL) {
   ..log(level = "e", msg, add, e$log_file_path, echo = TRUE)
@@ -215,7 +221,7 @@ log_inf <- function(msg = NULL, add = NULL) {
   ..log(level = "i", msg, add, e$log_file_path, echo = TRUE)
 }
 
-#' @describeIn log_funs Log errors
+#' @describeIn log_funs Read logs
 #' @export
 read_logs <- function(detail_parse = TRUE, detail_sep = "|", lf = NULL) {
   if (!requireNamespace("fs", quietly = TRUE))

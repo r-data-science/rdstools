@@ -12,3 +12,8 @@ catcall(vec)
 \description{
 Print the code to construct data
 }
+\examples{
+# Print the code to recreate a vector
+x <- 1:3
+catcall(x)
+}
