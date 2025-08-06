@@ -6,5 +6,6 @@
 [![lint](https://github.com/r-data-science/rdstools/actions/workflows/lint.yaml/badge.svg)](https://github.com/r-data-science/rdstools/actions/workflows/lint.yaml)
 [![test-coverage](https://github.com/r-data-science/rdstools/actions/workflows/Test-Coverage.yaml/badge.svg?branch=main)](https://github.com/r-data-science/rdstools/actions/workflows/Test-Coverage.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/rdstools)](https://CRAN.R-project.org/package=rdstools)
+[![R-CMD-check](https://github.com/r-data-science/rdstools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-data-science/rdstools/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
