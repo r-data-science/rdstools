@@ -28,7 +28,12 @@ report_coverage <- function(...) {
   ## Evaluate if not on ci, not testing, and has rstudio
   is_rs <- rstudioapi::isAvailable()
   is_ci <- as.logical(Sys.getenv("CI", "false"))
-  is_tt <- testthat::is_testing()
+  # Only call testthat::is_testing() if the package is installed
+  if (requireNamespace("testthat", quietly = TRUE)) {
+    is_tt <- testthat::is_testing()
+  } else {
+    is_tt <- FALSE
+  }
 
   if (!is_ci && !is_tt && is_rs) {
     rstudioapi::restartSession(

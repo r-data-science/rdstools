@@ -4,6 +4,11 @@
 #'
 #' @importFrom stringr str_sub str_length
 #'
+#' @examples
+#' # Print the code to recreate a vector
+#' x <- 1:3
+#' catcall(x)
+#'
 #' @export
 catcall <- function(vec) {
   tmp <- deparse1(call("{", vec))

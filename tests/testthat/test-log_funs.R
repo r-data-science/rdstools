@@ -3,8 +3,10 @@ library(R.utils)
 library(jsonlite)
 
 clear_logs <- function() {
-  if (fs::dir_exists("log")) {
-    fs::dir_delete("log")
+  # Clean up any log directories created in tempdir().
+  log_dir <- fs::path(tempdir(), "rdstools_logs")
+  if (fs::dir_exists(log_dir)) {
+    fs::dir_delete(log_dir)
   }
 }
 

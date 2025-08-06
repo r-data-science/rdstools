@@ -54,7 +54,7 @@ read_logs(detail_parse = TRUE, detail_sep = "|", lf = NULL)
 
 \item{detail_parse}{if TRUE, will parse the details column in the logs}
 
-\item{detail_sep}{Used to split the details column by separater (if detail_parse arg is TRUE)}
+\item{detail_sep}{Used to split the details column by separator (if detail\_parse is TRUE)}
 
 \item{lf}{log file name}
 }
@@ -71,19 +71,19 @@ Log Messages
 
 \item \code{..log()}: Internal function for logging
 
-\item \code{log_ini()}: Log errors
+\item \code{log\_ini()}: Log initiation (open)
 
-\item \code{log_end()}: Log errors
+\item \code{log\_end()}: Log closure
 
-\item \code{log_err()}: Log errors
+\item \code{log\_err()}: Log error messages
 
-\item \code{log_wrn()}: Log warning
+\item \code{log\_wrn()}: Log warning messages
 
-\item \code{log_suc()}: Log success
+\item \code{log\_suc()}: Log success messages
 
-\item \code{log_inf()}: Log info
+\item \code{log\_inf()}: Log info messages
 
-\item \code{read_logs()}: Log errors
+\item \code{read\_logs()}: Read logs
 
 }}
 \examples{
