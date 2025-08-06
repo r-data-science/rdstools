@@ -9,7 +9,8 @@
 #' @param jobId optional job number to group a set of log files
 #' @param lf log file name
 #' @param detail_parse if TRUE, will parse the details column in the logs
-#' @param detail_sep Used to split the details column by separator (if `detail_parse` is TRUE)
+#' @param detail_sep Used to split the details column by the specified separator.
+#'   This is only used when \code{detail_parse} is TRUE.
 #' @param ... additional arguments to pass to read_logs
 #'
 #' @import stringr
