@@ -21,6 +21,7 @@ Imports:
 Depends: 
     R (>= 4.0)
 Suggests:
+    spelling,
     covr,
     fs,
     jsonlite,
@@ -28,3 +29,4 @@ Suggests:
     testthat
 License: GPL (>= 3)
 Config/testthat/edition: 3
+Language: en-US
