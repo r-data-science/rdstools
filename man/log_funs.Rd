@@ -54,7 +54,7 @@ read_logs(detail_parse = TRUE, detail_sep = "|", lf = NULL)
 
 \item{detail_parse}{if TRUE, will parse the details column in the logs}
 
-\item{detail_sep}{Used to split the details column by the specified separator. This is only used when \code{detail\_parse} is TRUE}
+\item{detail_sep}{Used to split the details column by separator (if detail\_parse is TRUE)}
 
 \item{lf}{log file name}
 }

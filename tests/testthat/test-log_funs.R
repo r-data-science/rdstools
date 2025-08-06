@@ -43,13 +43,8 @@ test_that("Logging works!", {
   expect_false(is_file_empty(lf))
 
   ## ensure file head is as expected
-  ## The number of lines in the header depends on the length of Sys.info(), which
-  ## can vary across operating systems (Windows reports an additional field).
-  ## The header is composed of a top border, one line per Sys.info entry, a
-  ## bottom border, a blank separator line, and the initial OPEN log entry.
   nf <- R.utils::countLines(lf)
-  expected_lines <- length(Sys.info()) + 4
-  expect_equal(nf, expected_lines)
+  expect_true(nf == 12)
   expect_true(attr(nf, "lastLineHasNewline"))
 
   lf <- close_log(gather = FALSE)
