@@ -4,7 +4,7 @@
 \name{rdstools-package}
 \alias{rdstools}
 \alias{rdstools-package}
-\title{rdstools: Data Science Development}
+\title{rdstools: Data Science Development Tools}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 

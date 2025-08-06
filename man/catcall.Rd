@@ -16,4 +16,5 @@ Print the code to construct data
 # Print the code to recreate a vector
 x <- 1:3
 catcall(x)
+
 }
