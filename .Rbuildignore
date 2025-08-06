@@ -12,3 +12,4 @@
 ^LICENSE\.md$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^R/\.dev$
