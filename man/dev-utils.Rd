@@ -10,8 +10,14 @@ report_coverage(...)
 \arguments{
 \item{...}{arguments to covr::codecov}
 }
+\value{
+Invisibly returns the expression prepared for execution when no restart is triggered; otherwise called for side effects.
+}
 \description{
 Dev Tools
+}
+\details{
+Set the option \code{rdstools.mock_rstudio_available} to \code{TRUE} and provide a custom restart function via \code{rdstools.restart_session_fun}; optionally use \code{rdstools.mock_is_testing} to emulate non-testing sessions during automation.
 }
 \section{Functions}{
 \itemize{

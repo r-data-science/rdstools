@@ -9,7 +9,7 @@
 #' @param jobId optional job number to group a set of log files
 #' @param lf log file name
 #' @param detail_parse if TRUE, will parse the details column in the logs
-#' @param detail_sep Used to split the details column by separator (if `detail_parse` is TRUE)
+#' @param detail_sep Used to split the details column by separator (if \code{detail_parse} is TRUE)
 #' @param ... additional arguments to pass to read_logs
 #'
 #' @import stringr
@@ -32,6 +32,7 @@ e$log_file_path <- NULL
 
 
 #' @describeIn log_funs get log header
+#' @return A length-one character vector containing the formatted log header.
 log_header <- function() {
   if (!requireNamespace("jsonlite", quietly = TRUE))
     stop("Logging requires package 'jsonlite'", call. = FALSE)
@@ -46,6 +47,7 @@ log_header <- function() {
 
 
 #' @describeIn log_funs open log
+#' @return Invisibly returns the path to the log file that was opened.
 #' @export
 open_log <- function(fnam = NULL, jobId = NULL) {
   if (!requireNamespace("fs", quietly = TRUE))
@@ -84,6 +86,7 @@ open_log <- function(fnam = NULL, jobId = NULL) {
 }
 
 #' @describeIn log_funs close log
+#' @return Returns a \code{data.table} of log entries when \code{gather = TRUE}; otherwise invisibly returns \code{NULL}.
 #' @export
 close_log <- function(gather = TRUE, ...) {
   if (!requireNamespace("fs", quietly = TRUE))
@@ -171,10 +174,9 @@ close_log <- function(gather = TRUE, ...) {
 
   LOG <- paste0(P1, P2, P3)
 
-  if (has_color()) {
-    cat(LOG, '\n')
-  } else if (echo) {
-    cat(strip_style(LOG), '\n')
+  if (echo) {
+    output <- if (has_color()) LOG else strip_style(LOG)
+    message(output)
   }
 
   ## if log file is given, append to it
@@ -198,30 +200,35 @@ log_end <- function(msg = NULL, add = NULL) {
 }
 
 #' @describeIn log_funs Log error messages
+#' @return Invisibly returns the active log file path, if available.
 #' @export
 log_err <- function(msg = NULL, add = NULL) {
   ..log(level = "e", msg, add, e$log_file_path, echo = TRUE)
 }
 
 #' @describeIn log_funs Log warning
+#' @return Invisibly returns the active log file path, if available.
 #' @export
 log_wrn <- function(msg = NULL, add = NULL) {
   ..log(level = "w", msg, add, e$log_file_path, echo = TRUE)
 }
 
 #' @describeIn log_funs Log success
+#' @return Invisibly returns the active log file path, if available.
 #' @export
 log_suc <- function(msg = NULL, add = NULL) {
   ..log(level = "s", msg, add, e$log_file_path, echo = TRUE)
 }
 
 #' @describeIn log_funs Log info
+#' @return Invisibly returns the active log file path, if available.
 #' @export
 log_inf <- function(msg = NULL, add = NULL) {
   ..log(level = "i", msg, add, e$log_file_path, echo = TRUE)
 }
 
 #' @describeIn log_funs Read logs
+#' @return Returns a \code{data.table} with log details parsed into columns.
 #' @export
 read_logs <- function(detail_parse = TRUE, detail_sep = "|", lf = NULL) {
   if (!requireNamespace("fs", quietly = TRUE))

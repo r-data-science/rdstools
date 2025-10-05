@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Minimal package containing common tools used for logging and development of data science applications and pipelines.
+Utilities that support data-science project workflows by standardizing console logging, reproducible diagnostics, and package development tasks. The toolkit captures color-coded logs with persistent files, includes helpers to recreate data objects for debugging, and automates coverage reporting via covr-aware restart handling for interactive sessions.
 }
 \seealso{
 Useful links:

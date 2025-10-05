@@ -54,9 +54,26 @@ read_logs(detail_parse = TRUE, detail_sep = "|", lf = NULL)
 
 \item{detail_parse}{if TRUE, will parse the details column in the logs}
 
-\item{detail_sep}{Used to split the details column by separator (if `detail_parse` is TRUE)}
+\item{detail_sep}{Used to split the details column by separator (if \code{detail_parse} is TRUE)}
 
 \item{lf}{log file name}
+}
+\value{
+A length-one character vector containing the formatted log header.
+
+Invisibly returns the path to the log file that was opened.
+
+Returns a \code{data.table} of log entries when \code{gather = TRUE}; otherwise invisibly returns \code{NULL}.
+
+Invisibly returns the active log file path, if available.
+
+Invisibly returns the active log file path, if available.
+
+Invisibly returns the active log file path, if available.
+
+Invisibly returns the active log file path, if available.
+
+Returns a \code{data.table} with log details parsed into columns.
 }
 \description{
 Log Messages

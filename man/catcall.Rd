@@ -2,12 +2,22 @@
 % Please edit documentation in R/catcall.R
 \name{catcall}
 \alias{catcall}
+\alias{print.rdstools_catcall}
 \title{Print the code to construct data}
 \usage{
 catcall(vec)
+
+\method{print}{rdstools_catcall}(x, ...)
 }
 \arguments{
 \item{vec}{print the call for this data to the console}
+
+\item{x}{An object produced by \code{catcall()}.}
+
+\item{...}{Additional arguments passed to \code{print()}.}
+}
+\value{
+An object of class \code{rdstools_catcall} containing the deparsed expression.
 }
 \description{
 Print the code to construct data
