@@ -6,3 +6,5 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/rdstools)](https://CRAN.R-project.org/package=rdstools)
 <!-- badges: end -->
 
+For contributor workflow details, see [`AGENTS.md`](AGENTS.md).
+

@@ -14,3 +14,4 @@
 ^CRAN-SUBMISSION$
 ^R/\.dev$
 ^revdep$
+^AGENTS\.md$
