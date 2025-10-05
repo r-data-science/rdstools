@@ -63,8 +63,24 @@ The logging system maintains state in a package-level environment (`e`) with the
 - All exported functions require roxygen2 blocks with `@export` and examples
 - Keep side effects inside functions (no top-level execution)
 
+## Release Management
+
+This package uses **tag-based releases** where `main` always has the latest code (core platform dependency) and git tags mark CRAN versions.
+
+### Version Conventions
+- CRAN versions: `0.2.2`, `0.3.0` (clean numbers)
+- Development: `0.3.0.9000` (`.9000` suffix between CRAN releases)
+
+### Workflow
+1. Before CRAN submission, tag: `git tag v0.3.0-cran-submitted`
+2. Continue development on `main` (platform installs from here)
+3. When CRAN accepts: `git tag v0.3.0` on the submission commit
+4. After acceptance, bump to `X.Y.Z.9000` in DESCRIPTION
+5. Wait 2+ months between CRAN submissions (unless critical fixes)
+
 ## Important Notes
 
 - **Suggested packages**: `fs`, `jsonlite`, `R.utils` are in Suggests; check availability with `requireNamespace()` before use
 - **CRAN constraints**: The package is published on CRAN, so changes must comply with CRAN policies (no temp file leaks, proper permission handling, etc.)
 - Spell checks run via `tests/spelling.R` using `inst/WORDLIST`
+- **Installation**: Latest from `remotes::install_github("r-data-science/rdstools")`, specific tag with `@v0.2.2`
