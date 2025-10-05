@@ -7,6 +7,16 @@
 #' @param fnam name for log file
 #' @param gather if TRUE, gather logs and return on close
 #' @param jobId optional job number to group a set of log files
+#' @param dir Optional directory for log files. Defaults to \code{tempdir()}
+#'   unless \code{options(rdstools.log_dir)} is set.
+#' @param path Optional fully qualified path to the log file. Takes precedence
+#'   over \code{dir}, and may also be supplied through
+#'   \code{options(rdstools.log_path)} or the environment variable
+#'   \code{RDSTOOLS_LOG_PATH}.
+#' @param append Should an existing log file be appended to when \code{path}
+#'   points at an existing file?
+#' @param create_dir Should parent directories be created when they do not
+#'   already exist? Defaults to \code{TRUE}.
 #' @param lf log file name
 #' @param detail_parse if TRUE, will parse the details column in the logs
 #' @param detail_sep Used to split the details column by separator (if \code{detail_parse} is TRUE)
@@ -49,7 +59,12 @@ log_header <- function() {
 #' @describeIn log_funs open log
 #' @return Invisibly returns the path to the log file that was opened.
 #' @export
-open_log <- function(fnam = NULL, jobId = NULL) {
+open_log <- function(fnam = NULL,
+                     jobId = NULL,
+                     dir = NULL,
+                     path = NULL,
+                     append = TRUE,
+                     create_dir = TRUE) {
   if (!requireNamespace("fs", quietly = TRUE))
     stop("Logging requires package 'fs'", call. = FALSE)
   if (!requireNamespace("jsonlite", quietly = TRUE))
@@ -57,32 +72,97 @@ open_log <- function(fnam = NULL, jobId = NULL) {
 
   # Ensure jobId is a character string
   if (is.null(jobId)) jobId <- ""
-  # Create log directory under the session temp directory to satisfy CRAN policy
-  # Use a dedicated subdirectory ("rdstools_logs") to avoid cluttering tempdir()
-  ldir <- fs::dir_create(fs::path(tempdir(), "rdstools_logs", jobId))
-  # Determine log file name: if unspecified, create a temporary file within ldir
-  if (is.null(fnam)) {
-    fnam <- fs::path_file(fs::file_temp("log", tmp_dir = ldir))
-  }
-  fnam <- as.character(fnam)
-  # Ensure file has .log extension
-  fs::path_ext(fnam) <- ".log"
 
-  ## set internal environ params
-  ##
+  resolve_dir <- function(target_dir) {
+    if (!is.null(target_dir) && nzchar(target_dir)) {
+      target_dir <- fs::path_abs(target_dir)
+      if (!fs::dir_exists(target_dir)) {
+        if (create_dir) {
+          fs::dir_create(target_dir, recurse = TRUE)
+        } else {
+          stop("Log directory does not exist: ", target_dir, call. = FALSE)
+        }
+      }
+      return(target_dir)
+    }
+    NULL
+  }
+
+  # Check for explicit path via function argument, option, or env var
+  if (is.null(path) || !nzchar(path)) {
+    path <- getOption("rdstools.log_path")
+  }
+  if (is.null(path) || !nzchar(path)) {
+    env_path <- Sys.getenv("RDSTOOLS_LOG_PATH", "")
+    if (nzchar(env_path))
+      path <- env_path
+  }
+
+  new_file <- FALSE
+
+  if (!is.null(path) && nzchar(path)) {
+    path <- fs::path_norm(fs::path_abs(path))
+    parent_dir <- fs::path_dir(path)
+    if (!fs::dir_exists(parent_dir)) {
+      if (create_dir) {
+        fs::dir_create(parent_dir, recurse = TRUE)
+      } else {
+        stop("Log directory does not exist: ", parent_dir, call. = FALSE)
+      }
+    }
+    target_path <- path
+  } else {
+    # Determine directory priority: argument, option, then tempdir default
+    dir <- resolve_dir(dir)
+    if (is.null(dir)) {
+      dir_option <- getOption("rdstools.log_dir")
+      dir <- resolve_dir(dir_option)
+    }
+    if (is.null(dir)) {
+      dir <- fs::path(tempdir(), "rdstools_logs", jobId)
+      dir <- resolve_dir(dir)
+    }
+
+    # Determine log file name: if unspecified, create a temporary file within dir
+    if (is.null(fnam)) {
+      fnam <- fs::path_file(fs::file_temp("log", tmp_dir = dir))
+    }
+    fnam <- as.character(fnam)
+    if (!nzchar(fs::path_ext(fnam))) {
+      fnam <- paste0(fnam, ".log")
+    }
+    target_path <- fs::path(dir, fnam)
+  }
+
+  target_path <- fs::path_norm(target_path)
+
+  if (fs::file_exists(target_path)) {
+    if (!append) {
+      stop("Log file already exists: ", target_path, call. = FALSE)
+    }
+    tryCatch(fs::file_chmod(target_path, "a=rw"),
+      error = function(err) {
+        warning("Unable to set log file writable: ",
+          conditionMessage(err), call. = FALSE)
+        NULL
+      }
+    )
+  } else {
+    new_file <- TRUE
+    fs::file_create(target_path, mode = "a=wrx")
+    cat(log_header(), "\n", file = target_path)
+  }
+
+  # Update internal state only after file is ready
   e$log_job_id <- jobId
   e$log_is_active <- TRUE
-  e$log_dir_path <- ldir
-  e$log_file_path <- fs::path(ldir, fnam)
+  e$log_dir_path <- fs::path_dir(target_path)
+  e$log_file_path <- as.character(target_path)
 
-  if (fs::file_exists(e$log_file_path))
-    stop("Log file at path exists and is not empty", call. = FALSE)
+  ini_msg <- if (new_file) "Log File Created" else "Log File Reattached"
+  log_ini(ini_msg, add = target_path)
 
-  fp <- fs::file_create(e$log_file_path, mode = "a=wrx")
-  cat(log_header(), "\n", file = fp)
-  log_ini("Log File Created", add = fp)
-
-  invisible(as.character(fp))
+  invisible(as.character(target_path))
 }
 
 #' @describeIn log_funs close log
@@ -96,12 +176,28 @@ close_log <- function(gather = TRUE, ...) {
     warning("No active log file to close")
   } else {
 
-    log_end("Log File Closed", e$log_file_path)
+    log_path <- e$log_file_path
+    log_end("Log File Closed", log_path)
 
     ## change file permissions to read only
-    out <- fs::file_chmod(e$log_file_path, "a=r")
-    if (gather)
-      out <- setkey(read_logs(...), Level)[!c("OPEN", "CLOSE")][order(TimestampUTC)][]
+    tryCatch(fs::file_chmod(log_path, "a=r"),
+      error = function(err) {
+        warning("Unable to update permissions on log file: ",
+          conditionMessage(err), call. = FALSE)
+        NULL
+      }
+    )
+    if (gather) {
+      out <- tryCatch(
+        setkey(read_logs(...), Level)[!c("OPEN", "CLOSE")][order(TimestampUTC)][],
+        error = function(err) {
+          warning("Unable to gather log entries: ", conditionMessage(err), call. = FALSE)
+          NULL
+        }
+      )
+    } else {
+      out <- log_path
+    }
 
     e$log_is_active <- FALSE
     e$log_dir_path <- NULL
@@ -180,12 +276,34 @@ close_log <- function(gather = TRUE, ...) {
   }
 
   ## if log file is given, append to it
-  if ( !is.null(lf) ) {
-    cat(str_trim(strip_style(LOG), "both"), "\n", file = lf, append = TRUE)
-    lf <- as.character(lf)
+  if (!is.null(lf)) {
+    lf_chr <- as.character(lf)
+    write_ok <- tryCatch({
+        con <- suppressWarnings(file(lf_chr, open = "at"))
+        on.exit(close(con), add = TRUE)
+        writeLines(str_trim(strip_style(LOG), "both"), con)
+        TRUE
+      },
+      error = function(err) {
+        warning(
+          sprintf(
+            "Unable to write log entry to '%s': %s",
+            lf_chr,
+            conditionMessage(err)
+          ),
+          call. = FALSE
+        )
+        FALSE
+      }
+    )
+    if (!write_ok) {
+      lf_chr <- NULL
+    }
+  } else {
+    lf_chr <- NULL
   }
   # return null or log path invisibly
-  return(invisible(lf))
+  return(invisible(lf_chr))
 }
 
 
@@ -242,7 +360,12 @@ read_logs <- function(detail_parse = TRUE, detail_sep = "|", lf = NULL) {
     if (fs::file_exists(lf)) {
 
       tmp <- stringr::str_trim(readLines(lf), "right")
-      lines <- tmp[stringr::str_which(tmp, "^OPEN"):length(tmp)]
+      open_idx <- stringr::str_which(tmp, "^OPEN")
+      if (length(open_idx)) {
+        lines <- tmp[seq.int(min(open_idx), length(tmp))]
+      } else {
+        lines <- tmp
+      }
 
       OUT <- setkey(setnames(
         as.data.table(stringr::str_split(lines, "\\|", n = 4, simplify = TRUE)),
@@ -262,4 +385,11 @@ read_logs <- function(detail_parse = TRUE, detail_sep = "|", lf = NULL) {
   } else {
     stop("log file path not found")
   }
+}
+
+#' @describeIn log_funs Check if a log file is currently active
+#' @return A logical scalar indicating whether a log file is active.
+#' @export
+log_is_active <- function() {
+  isTRUE(e$log_is_active) && !is.null(e$log_file_path)
 }

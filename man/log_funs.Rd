@@ -13,11 +13,19 @@
 \alias{log_suc}
 \alias{log_inf}
 \alias{read_logs}
+\alias{log_is_active}
 \title{Log Messages}
 \usage{
 log_header()
 
-open_log(fnam = NULL, jobId = NULL)
+open_log(
+  fnam = NULL,
+  jobId = NULL,
+  dir = NULL,
+  path = NULL,
+  append = TRUE,
+  create_dir = TRUE
+)
 
 close_log(gather = TRUE, ...)
 
@@ -36,11 +44,27 @@ log_suc(msg = NULL, add = NULL)
 log_inf(msg = NULL, add = NULL)
 
 read_logs(detail_parse = TRUE, detail_sep = "|", lf = NULL)
+
+log_is_active()
 }
 \arguments{
 \item{fnam}{name for log file}
 
 \item{jobId}{optional job number to group a set of log files}
+
+\item{dir}{Optional directory for log files. Defaults to \code{tempdir()}
+unless \code{options(rdstools.log_dir)} is set.}
+
+\item{path}{Optional fully qualified path to the log file. Takes precedence
+over \code{dir}, and may also be supplied through
+\code{options(rdstools.log_path)} or the environment variable
+\code{RDSTOOLS_LOG_PATH}.}
+
+\item{append}{Should an existing log file be appended to when \code{path}
+points at an existing file?}
+
+\item{create_dir}{Should parent directories be created when they do not
+already exist? Defaults to \code{TRUE}.}
 
 \item{gather}{if TRUE, gather logs and return on close}
 
@@ -74,6 +98,8 @@ Invisibly returns the active log file path, if available.
 Invisibly returns the active log file path, if available.
 
 Returns a \code{data.table} with log details parsed into columns.
+
+A logical scalar indicating whether a log file is active.
 }
 \description{
 Log Messages
@@ -101,6 +127,8 @@ Log Messages
 \item \code{log_inf()}: Log info
 
 \item \code{read_logs()}: Read logs
+
+\item \code{log_is_active()}: Check if a log file is currently active
 
 }}
 \examples{
