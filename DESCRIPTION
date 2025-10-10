@@ -10,8 +10,7 @@ Description: Utilities that support 'R' data-science project workflows by
     standardizing console logging, reproducible diagnostics, and package
     development tasks. The toolkit captures color-coded logs with persistent
     files, includes helpers to recreate data objects for debugging, and
-    automates coverage reporting via 'covr'-aware restart handling for
-    interactive sessions.
+    automates coverage reporting for interactive sessions.
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.3.3
