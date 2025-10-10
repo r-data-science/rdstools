@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Utilities that support 'R' data-science project workflows by standardizing console logging, reproducible diagnostics, and package development tasks. The toolkit captures color-coded logs with persistent files, includes helpers to recreate data objects for debugging, and automates coverage reporting via 'covr'-aware restart handling for interactive sessions.
+Utilities that support 'R' data-science project workflows by standardizing console logging, reproducible diagnostics, and package development tasks. The toolkit captures color-coded logs with persistent files, includes helpers to recreate data objects for debugging, and automates coverage reporting for interactive sessions.
 }
 \seealso{
 Useful links:
