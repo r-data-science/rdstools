@@ -26,9 +26,41 @@
 - Update `inst/WORDLIST` if new terminology introduces spelling false positives; keep spelling expectations deterministic.
 
 ## Commit & Pull Request Guidelines
-- Commit messages are short, action-oriented statements (e.g., “Update README.md”, “Ran revdepcheck”); follow that imperative tone.
+- Commit messages are short, action-oriented statements (e.g., "Update README.md", "Ran revdepcheck"); follow that imperative tone.
 - Reference related issues in the commit body or PR description, and summarize validation steps (tests run, spell check results).
 - Pull requests should include a concise change overview, manual test notes, and any CRAN-impacting considerations (e.g., temp file handling).
+
+## Release Management & CRAN Workflow
+
+This package uses a **tag-based release workflow** where `main` always contains the latest code (for platform dependencies) and git tags mark CRAN versions.
+
+### Version Numbering
+- **CRAN versions**: Clean version numbers (e.g., `0.2.2`, `0.3.0`)
+- **Development versions**: `.9000` suffix (e.g., `0.3.0.9000`) indicates development between CRAN releases
+
+### Release Process
+1. **Before CRAN submission**: Tag `main` as `vX.Y.Z-cran-submitted` (e.g., `v0.2.2-cran-submitted`)
+2. **After submission**: Continue development on `main`; dependent platforms install from `main`
+3. **When CRAN accepts**: Add official tag `vX.Y.Z` to the submission commit
+4. **Post-release**: Bump `DESCRIPTION` version to `X.Y.Z.9000` and add development section to `NEWS.md`
+5. **Next CRAN submission**: Wait 2+ months between submissions unless fixing critical bugs
+
+### Tagging Commands
+```bash
+# Before CRAN submission
+git tag v0.3.0-cran-submitted
+git push origin v0.3.0-cran-submitted
+
+# After CRAN acceptance
+git checkout v0.3.0-cran-submitted
+git tag v0.3.0
+git push origin v0.3.0
+```
+
+### Installation Options
+- Latest development: `remotes::install_github("r-data-science/rdstools")`
+- Specific CRAN version: `remotes::install_github("r-data-science/rdstools@v0.2.2")`
+- From CRAN (once accepted): `install.packages("rdstools")`
 
 ## Additional Resources
 - Project overview and status badges live in [`README.md`](README.md).

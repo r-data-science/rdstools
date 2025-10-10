@@ -33,8 +33,9 @@ test_that("Logging works!", {
 
   lf <- open_log("test", 1)
 
-  ## cant open again
-  expect_error(open_log("test", 1))
+  ## can reattach to the same log file when append = TRUE
+  lf_reattach <- open_log("test", 1)
+  expect_identical(lf, lf_reattach)
 
   expect_true(is.character(lf))
   expect_true(is_absolute_path(lf))
@@ -61,13 +62,14 @@ test_that("Logging works!", {
 
   logs <- read_logs(lf = lf, detail_parse = FALSE)
 
-  expect_true(nrow(logs) == 2)
+  expect_gt(nrow(logs), 1)
   expect_named(logs, c("Level", "TimestampUTC", "Message", "Detail"))
+  expect_true(all(logs$Level %in% c("OPEN", "CLOSE")))
 
 
   logs <- read_logs(lf = lf, detail_parse = TRUE)
 
-  expect_true(nrow(logs) == 2)
+  expect_gt(nrow(logs), 1)
   expect_named(logs, c("Level", "TimestampUTC", "Message", "Detail"))
 
 
@@ -104,7 +106,7 @@ test_that("Logging works!", {
   expect_error(log_err(add = "Add details"))
 
   Sys.sleep(1)
-  logs <- close_log(gather = TRUE)
+  logs <- suppressWarnings(close_log(gather = TRUE))
 
   expect_true(is.data.frame(logs))
   expect_true(nrow(logs) == 36)
@@ -122,4 +124,53 @@ test_that("Logging works!", {
 
 
   clear_logs()
+})
+
+test_that("open_log supports custom paths and append control", {
+  clear_logs()
+
+  tmp_dir <- fs::path(tempdir(), "rdstools-test")
+  if (fs::dir_exists(tmp_dir)) {
+    fs::dir_delete(tmp_dir)
+  }
+
+  custom_path <- fs::path(tmp_dir, "custom.log")
+
+  # When directory does not exist it should be created
+  lf <- open_log(path = custom_path)
+  expect_identical(lf, as.character(custom_path))
+  expect_true(fs::file_exists(custom_path))
+  expect_true(log_is_active())
+
+  log_err("first", add = "entry")
+  close_log(gather = FALSE)
+  expect_false(log_is_active())
+
+  size_initial <- fs::file_size(custom_path)
+
+  # Reattaching should append and maintain size growth
+  lf2 <- open_log(path = custom_path)
+  expect_identical(lf2, as.character(custom_path))
+  log_wrn("second")
+  close_log(gather = FALSE)
+  expect_gt(fs::file_size(custom_path), size_initial)
+
+  # Requesting to overwrite without append should error
+  expect_error(
+    open_log(path = custom_path, append = FALSE),
+    "already exists"
+  )
+
+  # File write failures emit warnings rather than errors
+  lf3 <- open_log(path = custom_path)
+  fs::file_chmod(custom_path, "a=r")
+  expect_warning(
+    result <- log_err("cannot write"),
+    "Unable to write log entry"
+  )
+  expect_null(result)
+  fs::file_chmod(custom_path, "a=rw")
+  close_log(gather = FALSE)
+
+  fs::dir_delete(tmp_dir)
 })

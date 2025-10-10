@@ -1,3 +1,30 @@
+# rdstools 0.3.0 (development)
+
+This release focuses on production-grade logging so Shiny applications can fan
+out console messages to persistent log files without destabilizing running
+sessions.
+
+**Note**: This version is in development. The latest CRAN submission is v0.2.2.
+
+## Highlights
+
+* `open_log()` now accepts explicit `path` and `dir` arguments (plus the
+  `RDSTOOLS_LOG_PATH` environment variable and matching options) so parent
+  applications can direct logs to existing log files. Existing calls that omit
+  these parameters continue to create files under `tempdir()`.
+* Reattaching to an existing log is now supported; the helper restores
+  write-permissions and records a "Log File Reattached" entry instead of
+  failing.
+* File writes are wrapped in guarded I/O that surfaces a warning rather than an
+  error when the OS denies access, preventing downstream packages from
+  crashing when log files disappear or become read-only.
+* Added `log_is_active()` so dependent modules can detect whether a shared log
+  has been opened by the host application.
+* `read_logs()` tolerates multiple `OPEN` entries, eliminating prior warnings
+  when a session reattached to a log file.
+* Extended test coverage around custom log paths, append behavior, and failure
+  modes; updated documentation to describe the new configuration knobs.
+
 # rdstools 0.1.3
 
 This release prepares **rdstools** for CRAN submission and improves the package usability while maintaining backwards compatibility with dependent projects.

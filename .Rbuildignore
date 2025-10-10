@@ -15,3 +15,5 @@
 ^R/\.dev$
 ^revdep$
 ^AGENTS\.md$
+^CLAUDE\.md$
+^\.claude$
