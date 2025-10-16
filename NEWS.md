@@ -1,10 +1,8 @@
-# rdstools 0.3.0 (development)
+# rdstools 0.3.1
 
 This release focuses on production-grade logging so Shiny applications can fan
 out console messages to persistent log files without destabilizing running
 sessions.
-
-**Note**: This version is in development. The latest CRAN submission is v0.2.2.
 
 ## Highlights
 
