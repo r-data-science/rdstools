@@ -90,7 +90,7 @@ open_log <- function(fnam = NULL,
 
   # Check for explicit path via function argument, option, or env var
   if (is.null(path) || !nzchar(path)) {
-    path <- getOption("rdstools.log_path")
+    path <- base::getOption("rdstools.log_path")
   }
   if (is.null(path) || !nzchar(path)) {
     env_path <- Sys.getenv("RDSTOOLS_LOG_PATH", "")
@@ -115,7 +115,7 @@ open_log <- function(fnam = NULL,
     # Determine directory priority: argument, option, then tempdir default
     dir <- resolve_dir(dir)
     if (is.null(dir)) {
-      dir_option <- getOption("rdstools.log_dir")
+      dir_option <- base::getOption("rdstools.log_dir")
       dir <- resolve_dir(dir_option)
     }
     if (is.null(dir)) {

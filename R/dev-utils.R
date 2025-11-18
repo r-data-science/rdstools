@@ -28,15 +28,10 @@ report_coverage <- function(...) {
     deparse(nlines = 1, width.cutoff = 500)
 
   ## Evaluate if not on ci, not testing, and has rstudio
-  mock_is_rs <- getOption("rdstools.mock_rstudio_available", NULL)
-  is_rs <- if (is.null(mock_is_rs)) {
-    rstudioapi::isAvailable()
-  } else {
-    isTRUE(mock_is_rs)
-  }
-  restart_fun <- getOption("rdstools.restart_session_fun", rstudioapi::restartSession)
+  is_rs <- rstudio_is_available()
+  restart_fun <- base::getOption("rdstools.restart_session_fun", rstudioapi::restartSession)
   is_ci <- as.logical(Sys.getenv("CI", "false"))
-  mock_is_tt <- getOption("rdstools.mock_is_testing", NULL)
+  mock_is_tt <- base::getOption("rdstools.mock_is_testing", NULL)
   # Only call testthat::is_testing() if the package is installed
   if (is.null(mock_is_tt)) {
     if (requireNamespace("testthat", quietly = TRUE)) {
@@ -58,5 +53,3 @@ report_coverage <- function(...) {
 
   invisible(rlang::parse_expr(expr_txt))
 }
-
-

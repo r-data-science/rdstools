@@ -19,9 +19,7 @@ NULL
 #' activate_terminal()
 #' }
 activate_terminal <- function() {
-  if (!rstudioapi::isAvailable()) {
-    stop("This function requires RStudio", call. = FALSE)
-  }
+  ensure_rstudio_available()
   rstudioapi::terminalActivate()
   invisible(NULL)
 }
@@ -37,9 +35,7 @@ activate_terminal <- function() {
 #' activate_console()
 #' }
 activate_console <- function() {
-  if (!rstudioapi::isAvailable()) {
-    stop("This function requires RStudio", call. = FALSE)
-  }
+  ensure_rstudio_available()
   rstudioapi::executeCommand("activateConsole", quiet = TRUE)
   invisible(NULL)
 }
@@ -56,9 +52,7 @@ activate_console <- function() {
 #' activate_source_editor()
 #' }
 activate_source_editor <- function() {
-  if (!rstudioapi::isAvailable()) {
-    stop("This function requires RStudio", call. = FALSE)
-  }
+  ensure_rstudio_available()
   # Try to execute the command to activate the source pane
   rstudioapi::executeCommand("activateSource", quiet = TRUE)
   invisible(NULL)
@@ -77,9 +71,7 @@ activate_source_editor <- function() {
 #' layout_two_column()
 #' }
 layout_two_column <- function() {
-  if (!rstudioapi::isAvailable()) {
-    stop("This function requires RStudio", call. = FALSE)
-  }
+  ensure_rstudio_available()
   # Execute command to set layout to console on left (standard 2-column)
   rstudioapi::executeCommand("layoutConsoleOnLeft", quiet = TRUE)
   invisible(NULL)
@@ -98,9 +90,7 @@ layout_two_column <- function() {
 #' layout_three_column()
 #' }
 layout_three_column <- function() {
-  if (!rstudioapi::isAvailable()) {
-    stop("This function requires RStudio", call. = FALSE)
-  }
+  ensure_rstudio_available()
   # Execute command to add a source column
   # Note: The exact command may vary by RStudio version
   rstudioapi::executeCommand("layoutZoomSource", quiet = TRUE)
@@ -120,9 +110,7 @@ layout_three_column <- function() {
 #' layout_four_column()
 #' }
 layout_four_column <- function() {
-  if (!rstudioapi::isAvailable()) {
-    stop("This function requires RStudio", call. = FALSE)
-  }
+  ensure_rstudio_available()
   # Execute command for 4-column layout
   # Note: The exact command may vary by RStudio version
   # This is a placeholder as RStudio may not support 4 columns via API
@@ -156,9 +144,7 @@ layout_four_column <- function() {
 #' switch_theme("light", 1)
 #' }
 switch_theme <- function(type = "dark", which = NULL) {
-  if (!rstudioapi::isAvailable()) {
-    stop("This function requires RStudio", call. = FALSE)
-  }
+  ensure_rstudio_available()
   
   dark_themes <- c(
     "Horizon Dark {rsthemes}",
@@ -256,9 +242,7 @@ pkg_coverage <- function() {
 #' restart_session(clean = TRUE)
 #' }
 restart_session <- function(clean = FALSE, ...) {
-  if (!rstudioapi::isAvailable()) {
-    stop("This function requires RStudio", call. = FALSE)
-  }
+  ensure_rstudio_available()
   rstudioapi::restartSession(clean = clean, ...)
   invisible(NULL)
 }
