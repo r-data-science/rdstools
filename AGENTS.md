@@ -1,4 +1,13 @@
-# Repository Guidelines
+# AGENTS.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Overview
+
+`rdstools` is an R package providing data science development utilities focused on three areas:
+1. **Logging** - Color-coded console logs with persistent file output via `log_*()` functions
+2. **Debugging** - `catcall()` helper to recreate data objects for reproducible diagnostics
+3. **Development** - `report_coverage()` for automated coverage reporting with RStudio restart handling
 
 ## Project Structure & Module Organization
 - `R/` holds the package logic; exported helpers live in files such as `log_funs.R` and `dev-utils.R` and follow roxygen2 documentation blocks.
@@ -7,13 +16,45 @@
 - Ancillary package metadata lives in `DESCRIPTION`, `NAMESPACE`, and `NEWS.md`; edit these rather than duplicating configuration in code.
 
 ## Build, Test, and Development Commands
-- Start with a clean R session (e.g., RStudio `Ctrl/Cmd+Shift+F10`) before redocumenting to avoid stale state.
-- `Rscript -e "devtools::document()"` regenerates Rd files and `NAMESPACE` via roxygen2 after code changes.
-- `Rscript -e "devtools::test()"` runs the testthat suite in `tests/testthat/`.
-- `Rscript -e "devtools::check()"` performs the full `R CMD check`, including spell checks defined in `tests/spelling.R`.
-- `Rscript -e "covr::package_coverage()"` must report ≥ 0.80 before merging; review the per-file breakdown if coverage dips.
-- `Rscript -e "pkgload::load_all()"` reloads the package for interactive exploration between these steps.
-- Follow the sequence: restart R → document → test → check → confirm coverage before opening a PR.
+
+Start with a clean R session (RStudio `Ctrl/Cmd+Shift+F10`) before redocumenting:
+
+```bash
+# Regenerate Rd files and NAMESPACE after code changes
+Rscript -e "devtools::document()"
+
+# Run the testthat suite
+Rscript -e "devtools::test()"
+
+# Full R CMD check (includes spell checks)
+Rscript -e "devtools::check()"
+
+# Check coverage (must be ≥ 80%)
+Rscript -e "covr::package_coverage()"
+
+# Reload package for interactive exploration
+Rscript -e "pkgload::load_all()"
+```
+
+**Workflow sequence**: restart R → document → test → check → confirm coverage before PR.
+
+## Architecture
+
+### Logging System (R/log_funs.R)
+
+The logging system maintains state in a package-level environment (`e`) with these fields:
+- `log_is_active` - boolean indicating if a log file is open
+- `log_file_path` - path to the active log file
+- `log_dir_path` - directory containing the log file
+- `log_job_id` - optional job identifier for grouping logs
+
+**Key behavior**:
+- `open_log()` resolves file paths via: explicit `path` argument → `options(rdstools.log_path)` → `RDSTOOLS_LOG_PATH` env var → `dir` argument → `options(rdstools.log_dir)` → `tempdir()` default
+- `open_log()` creates parent directories by default (`create_dir = TRUE`) and appends to existing files unless `append = FALSE`
+- All `log_*()` functions write to console AND the active log file (if open)
+- `close_log(gather = TRUE)` returns a `data.table` of parsed log entries
+- Logs use pipe-separated format: `LEVEL|TIMESTAMP|MESSAGE|DETAIL`
+- File permissions are managed: writable when active, read-only after `close_log()`
 
 ## Coding Style & Naming Conventions
 - Use tidyverse-aligned R style: two-space indents, `<-` for assignment, and snake_case for function and object names (`log_header`, `open_log`).
@@ -22,6 +63,7 @@
 
 ## Testing Guidelines
 - Place new tests in files named `test-*.R` under `tests/testthat/`; mirror the feature or function name for clarity.
+- Test files mirror source files: `test-log_funs.R` tests `R/log_funs.R`
 - Keep line coverage at or above 80%; use `Rscript -e "covr::report()"` to inspect regressions when modifying logging or filesystem code.
 - Update `inst/WORDLIST` if new terminology introduces spelling false positives; keep spelling expectations deterministic.
 
@@ -62,6 +104,11 @@ git push origin v0.3.0
 - Specific CRAN version: `remotes::install_github("r-data-science/rdstools@v0.2.2")`
 - From CRAN (once accepted): `install.packages("rdstools")`
 
+## Important Notes
+
+- **Suggested packages**: `fs`, `jsonlite`, `R.utils` are in Suggests; check availability with `requireNamespace()` before use
+- **CRAN constraints**: The package is published on CRAN, so changes must comply with CRAN policies (no temp file leaks, proper permission handling, etc.)
+- Spell checks run via `tests/spelling.R` using `inst/WORDLIST`
+
 ## Additional Resources
 - Project overview and status badges live in [`README.md`](README.md).
-
