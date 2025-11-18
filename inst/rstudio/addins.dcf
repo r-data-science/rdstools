@@ -1,0 +1,69 @@
+Name: Activate Terminal
+Description: Create terminal if needed and move focus to terminal
+Binding: activate_terminal
+Interactive: false
+
+Name: Activate Console
+Description: Bring console to front and move focus to console
+Binding: activate_console
+Interactive: false
+
+Name: Activate Source Editor
+Description: Move cursor focus to the source editor
+Binding: activate_source_editor
+Interactive: false
+
+Name: Layout: Two Column
+Description: Switch to default 2-column layout
+Binding: layout_two_column
+Interactive: false
+
+Name: Layout: Three Column
+Description: Switch to 3-column layout
+Binding: layout_three_column
+Interactive: false
+
+Name: Layout: Four Column
+Description: Switch to 4-column layout
+Binding: layout_four_column
+Interactive: false
+
+Name: Switch Theme: Random Dark
+Description: Apply a random dark theme
+Binding: switch_theme
+Interactive: false
+
+Name: Package Coverage
+Description: Run coverage report on current package
+Binding: pkg_coverage
+Interactive: false
+
+Name: Restart Session
+Description: Restart the RStudio R session
+Binding: restart_session
+Interactive: false
+
+Name: Load All Code
+Description: Load all package code using devtools::load_all()
+Binding: load_all_code
+Interactive: false
+
+Name: Document Package
+Description: Generate package documentation using devtools::document()
+Binding: document_package
+Interactive: false
+
+Name: Build Package
+Description: Build the package using devtools::build()
+Binding: build_package
+Interactive: false
+
+Name: Test Package
+Description: Run package tests using devtools::test()
+Binding: test_package
+Interactive: false
+
+Name: Check Package
+Description: Run R CMD check using devtools::check()
+Binding: check_package
+Interactive: false
