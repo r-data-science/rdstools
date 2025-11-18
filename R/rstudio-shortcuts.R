@@ -180,8 +180,9 @@ switch_theme <- function(type = "dark", which = NULL) {
     )
   }
   
-  if (which < 1 | which > length(dark_themes)) {
-    stop(paste("which must be between 1 and", length(dark_themes)))
+  theme_list_length <- if (type == "dark") length(dark_themes) else length(light_themes)
+  if (which < 1 | which > theme_list_length) {
+    stop(paste("which must be between 1 and", theme_list_length))
   }
   
   if (type == "dark") {
