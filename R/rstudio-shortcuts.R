@@ -187,8 +187,7 @@ switch_theme <- function(type = "dark", which = NULL) {
   
   if (type == "dark") {
     rstudioapi::applyTheme(dark_themes[which])
-  }
-  if (type == "light") {
+  } else {
     rstudioapi::applyTheme(light_themes[which])
   }
   
