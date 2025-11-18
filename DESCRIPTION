@@ -1,6 +1,6 @@
 Package: rdstools
 Title: Data Science Development Tools for 'R'
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: 
     person(given = "Bobby",
            family = "Fatemi",
