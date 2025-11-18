@@ -30,7 +30,12 @@ Interactive: false
 
 Name: Switch Theme: Random Dark
 Description: Apply a random dark theme
-Binding: switch_theme
+Binding: switch_theme_dark
+Interactive: false
+
+Name: Switch Theme: Random Light
+Description: Apply a random light theme
+Binding: switch_theme_light
 Interactive: false
 
 Name: Package Coverage

@@ -194,6 +194,34 @@ switch_theme <- function(type = "dark", which = NULL) {
   invisible(NULL)
 }
 
+#' Switch to Random Light Theme
+#'
+#' Convenience wrapper to apply a random light theme.
+#'
+#' @return Called for side effects; returns NULL invisibly.
+#' @export
+#' @examples
+#' \dontrun{
+#' switch_theme_light()
+#' }
+switch_theme_light <- function() {
+  switch_theme("light")
+}
+
+#' Switch to Random Dark Theme
+#'
+#' Convenience wrapper to apply a random dark theme.
+#'
+#' @return Called for side effects; returns NULL invisibly.
+#' @export
+#' @examples
+#' \dontrun{
+#' switch_theme_dark()
+#' }
+switch_theme_dark <- function() {
+  switch_theme("dark")
+}
+
 #' Run Package Coverage
 #'
 #' A convenience function to run coverage report on the current package.
