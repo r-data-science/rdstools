@@ -47,7 +47,6 @@ saveHexImage <- function(prompt) {
 }
 
 
-
 # openai_hex_image <- function(prompt) {
 #   if (Sys.getenv("OPENAI_API_KEY") == "")
 #     stop("Please set envvar OPENAI_API_KEY", call. = FALSE)

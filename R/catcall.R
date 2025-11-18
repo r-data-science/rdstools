@@ -25,4 +25,3 @@ print.rdstools_catcall <- function(x, ...) {
   cat("\n", unclass(x), "\n\n", sep = "")
   invisible(x)
 }
-

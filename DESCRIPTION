@@ -9,8 +9,9 @@ Authors@R:
 Description: Utilities that support 'R' data-science project workflows by
     standardizing console logging, reproducible diagnostics, and package
     development tasks. The toolkit captures color-coded logs with persistent
-    files, includes helpers to recreate data objects for debugging, and
-    automates coverage reporting for interactive sessions.
+    files, includes helpers to recreate data objects for debugging, automates
+    coverage reporting for interactive sessions, and provides RStudio addins
+    for common IDE operations that can be mapped to keyboard shortcuts.
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.3.3
@@ -27,6 +28,7 @@ Depends:
 Suggests:
     spelling,
     covr,
+    devtools,
     fs,
     jsonlite,
     R.utils,

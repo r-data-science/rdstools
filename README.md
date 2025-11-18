@@ -21,6 +21,51 @@ remotes::install_github("r-data-science/rdstools@v0.2.2")
 install.packages("rdstools")
 ```
 
+## RStudio Addins for IDE Control
+
+`rdstools` provides RStudio addins to control common IDE operations, making them
+easy to map to keyboard shortcuts or Stream Deck buttons:
+
+```r
+# Activate different panes
+rdstools::activate_terminal()
+rdstools::activate_console()
+rdstools::activate_source_editor()
+
+# Change IDE layout
+rdstools::layout_two_column()
+rdstools::layout_three_column()
+rdstools::layout_four_column()
+
+# Switch themes (requires rsthemes package)
+rdstools::switch_theme_dark()   # Random dark theme
+rdstools::switch_theme_light()  # Random light theme
+
+# Package development shortcuts
+rdstools::restart_session()
+rdstools::load_all_code()
+rdstools::document_package()
+rdstools::build_package()
+rdstools::test_package()
+rdstools::check_package()
+rdstools::pkg_coverage()
+```
+
+### Setting Up Keyboard Shortcuts
+
+After installing the package:
+
+1. In RStudio, go to **Tools > Modify Keyboard Shortcuts**
+2. Search for "rdstools" or the specific addin name
+3. Click in the Shortcut column and press your desired key combination
+4. Click Apply
+
+For Stream Deck integration:
+
+1. Set keyboard shortcuts in RStudio for each addin
+2. In Stream Deck software, create buttons that trigger those keyboard shortcuts
+3. Optionally add icons and labels to identify each function
+
 ## Logging to Files
 
 `rdstools::log_*()` helpers still write to the console by default. To capture
