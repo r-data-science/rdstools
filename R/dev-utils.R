@@ -1,4 +1,3 @@
-
 #' Dev Tools
 #'
 #' @param ... arguments to covr::codecov
@@ -13,18 +12,21 @@ NULL
 report_coverage <- function(...) {
   args <- rlang::dots_list(...)
 
-  if (!"quiet" %in% names(args))
+  if (!"quiet" %in% names(args)) {
     args$quiet <- FALSE
-  if (!"path" %in% names(args))
+  }
+  if (!"path" %in% names(args)) {
     args$path <- "."
+  }
 
   # args <- list(quiet = FALSE, clean = FALSE)
   args <- list(args)
 
   expr_txt <- do.call(
-    eval(parse(text = 'covr::codecov')),
+    eval(parse(text = "covr::codecov")),
     args = !!!args
-  ) |> rlang::expr() |>
+  ) |>
+    rlang::expr() |>
     deparse(nlines = 1, width.cutoff = 500)
 
   ## Evaluate if not on ci, not testing, and has rstudio

@@ -145,7 +145,7 @@ layout_four_column <- function() {
 #' }
 switch_theme <- function(type = "dark", which = NULL) {
   ensure_rstudio_available()
-  
+
   dark_themes <- c(
     "Horizon Dark {rsthemes}",
     "Yule RStudio {rsthemes}",
@@ -156,27 +156,27 @@ switch_theme <- function(type = "dark", which = NULL) {
     "Flat White {rsthemes}",
     "Elm Light {rsthemes}"
   )
-  
+
   stopifnot("type must be 'dark' or 'light'" = type %in% c("dark", "light"))
-  
+
   if (is.null(which)) {
     which <- switch(type,
       "dark" = sample(1:length(dark_themes), 1),
       "light" = sample(1:length(light_themes), 1)
     )
   }
-  
+
   theme_list_length <- if (type == "dark") length(dark_themes) else length(light_themes)
   if (which < 1 | which > theme_list_length) {
     stop(paste("which must be between 1 and", theme_list_length))
   }
-  
+
   if (type == "dark") {
     rstudioapi::applyTheme(dark_themes[which])
   } else {
     rstudioapi::applyTheme(light_themes[which])
   }
-  
+
   invisible(NULL)
 }
 

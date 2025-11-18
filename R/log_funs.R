@@ -40,12 +40,12 @@ e$log_job_id <- ""
 e$log_file_path <- NULL
 
 
-
 #' @describeIn log_funs get log header
 #' @return A length-one character vector containing the formatted log header.
 log_header <- function() {
-  if (!requireNamespace("jsonlite", quietly = TRUE))
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
     stop("Logging requires package 'jsonlite'", call. = FALSE)
+  }
   hd_brdr <- stringr::str_pad("#", pad = "=", side = "right", width = 65)
   tmp1 <- jsonlite::toJSON(as.list(Sys.info()), pretty = TRUE, auto_unbox = TRUE)
   tmp2 <- jsonlite::unbox(jsonlite::prettify(tmp1, 3))
@@ -65,10 +65,12 @@ open_log <- function(fnam = NULL,
                      path = NULL,
                      append = TRUE,
                      create_dir = TRUE) {
-  if (!requireNamespace("fs", quietly = TRUE))
+  if (!requireNamespace("fs", quietly = TRUE)) {
     stop("Logging requires package 'fs'", call. = FALSE)
-  if (!requireNamespace("jsonlite", quietly = TRUE))
+  }
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
     stop("Logging requires package 'jsonlite'", call. = FALSE)
+  }
 
   # Ensure jobId is a character string
   if (is.null(jobId)) jobId <- ""
@@ -94,8 +96,9 @@ open_log <- function(fnam = NULL,
   }
   if (is.null(path) || !nzchar(path)) {
     env_path <- Sys.getenv("RDSTOOLS_LOG_PATH", "")
-    if (nzchar(env_path))
+    if (nzchar(env_path)) {
       path <- env_path
+    }
   }
 
   new_file <- FALSE
@@ -143,7 +146,9 @@ open_log <- function(fnam = NULL,
     tryCatch(fs::file_chmod(target_path, "a=rw"),
       error = function(err) {
         warning("Unable to set log file writable: ",
-          conditionMessage(err), call. = FALSE)
+          conditionMessage(err),
+          call. = FALSE
+        )
         NULL
       }
     )
@@ -169,13 +174,13 @@ open_log <- function(fnam = NULL,
 #' @return Returns a \code{data.table} of log entries when \code{gather = TRUE}; otherwise invisibly returns \code{NULL}.
 #' @export
 close_log <- function(gather = TRUE, ...) {
-  if (!requireNamespace("fs", quietly = TRUE))
+  if (!requireNamespace("fs", quietly = TRUE)) {
     stop("Logging requires package 'fs'", call. = FALSE)
+  }
 
   if (!e$log_is_active) {
     warning("No active log file to close")
   } else {
-
     log_path <- e$log_file_path
     log_end("Log File Closed", log_path)
 
@@ -183,7 +188,9 @@ close_log <- function(gather = TRUE, ...) {
     tryCatch(fs::file_chmod(log_path, "a=r"),
       error = function(err) {
         warning("Unable to update permissions on log file: ",
-          conditionMessage(err), call. = FALSE)
+          conditionMessage(err),
+          call. = FALSE
+        )
         NULL
       }
     )
@@ -213,57 +220,58 @@ close_log <- function(gather = TRUE, ...) {
 ..log <- function(level = c("e", "i", "w", "s", "o", "c"), ...) {
   ts <- format(Sys.time(), "%Y-%m-%d %H:%M:%S")
   if (level == "o") {
-    LEV <- bgBlack(white('OPEN'))
+    LEV <- bgBlack(white("OPEN"))
     TST <- blue(as.character(ts))
-    RLG <- bold(blue('<path>'))
+    RLG <- bold(blue("<path>"))
   }
 
   if (level == "c") {
-    LEV <- bgBlack(white('CLOSE'))
+    LEV <- bgBlack(white("CLOSE"))
     TST <- blue(as.character(ts))
-    RLG <- bold(blue('<path>'))
+    RLG <- bold(blue("<path>"))
   }
 
   if (level == "e") {
-    LEV <- bgRed(white('ERROR'))
+    LEV <- bgRed(white("ERROR"))
     TST <- red(as.character(ts))
-    RLG <- bold(red('<error>'))
+    RLG <- bold(red("<error>"))
   }
 
   if (level == "w") {
-    LEV <- bgYellow(white('WARNING'))
+    LEV <- bgYellow(white("WARNING"))
     TST <- yellow(bold(as.character(ts)))
-    RLG <- bold(yellow('<warn>'))
+    RLG <- bold(yellow("<warn>"))
   }
 
   if (level == "i") {
-    LEV <- bgBlue(white('INFO'))
+    LEV <- bgBlue(white("INFO"))
     TST <- blue(bold(as.character(ts)))
-    RLG <- bold(blue('<info>'))
+    RLG <- bold(blue("<info>"))
   }
 
   if (level == "s") {
-    LEV <- bgGreen(white('SUCCESS'))
+    LEV <- bgGreen(white("SUCCESS"))
     TST <- green(bold(as.character(ts)))
-    RLG <- bold(green('<succ>'))
+    RLG <- bold(green("<succ>"))
   }
 
   ARG <- list(...)
 
-  msg  <- ARG[[1]]
-  add  <- ARG[[2]]
-  lf   <- ARG[[3]]
+  msg <- ARG[[1]]
+  add <- ARG[[2]]
+  lf <- ARG[[3]]
   echo <- ARG[[4]]
 
-  if (!is.null(add) & is.null(msg))
+  if (!is.null(add) & is.null(msg)) {
     stop("Arg 'msg' is required when 'add' is given")
+  }
 
   if (!is.null(msg)) msg <- str_c(as.character(msg), collapse = " ")
   if (!is.null(add)) add <- str_c(as.character(add), collapse = " ")
 
   MSG <- cyan(italic(msg))
   ADD <- cyan(italic(add))
-  SEP <- silver('|')
+  SEP <- silver("|")
   P1 <- str_glue("{LEV}{SEP}{TST}")
   P2 <- str_glue("{SEP}{MSG}")
   P3 <- str_glue("{SEP}{RLG} {ADD}")
@@ -278,7 +286,8 @@ close_log <- function(gather = TRUE, ...) {
   ## if log file is given, append to it
   if (!is.null(lf)) {
     lf_chr <- as.character(lf)
-    write_ok <- tryCatch({
+    write_ok <- tryCatch(
+      {
         con <- suppressWarnings(file(lf_chr, open = "at"))
         on.exit(close(con), add = TRUE)
         writeLines(str_trim(strip_style(LOG), "both"), con)
@@ -349,8 +358,9 @@ log_inf <- function(msg = NULL, add = NULL) {
 #' @return Returns a \code{data.table} with log details parsed into columns.
 #' @export
 read_logs <- function(detail_parse = TRUE, detail_sep = "|", lf = NULL) {
-  if (!requireNamespace("fs", quietly = TRUE))
+  if (!requireNamespace("fs", quietly = TRUE)) {
     stop("Logging requires package 'fs'", call. = FALSE)
+  }
 
   lf[is.null(lf)] <- e$log_file_path
 
@@ -358,7 +368,6 @@ read_logs <- function(detail_parse = TRUE, detail_sep = "|", lf = NULL) {
 
   if (!is.null(lf)) {
     if (fs::file_exists(lf)) {
-
       tmp <- stringr::str_trim(readLines(lf), "right")
       open_idx <- stringr::str_which(tmp, "^OPEN")
       if (length(open_idx)) {

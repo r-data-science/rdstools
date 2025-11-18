@@ -11,9 +11,7 @@ clear_logs <- function() {
 }
 
 
-
 test_that("Logging works!", {
-
   fp <- fs::file_create("test.log")
   x <- ..log(level = "e", "message", "add", lf = fp, TRUE)
   expect_true(fs::file_exists(x))
@@ -73,33 +71,42 @@ test_that("Logging works!", {
   expect_named(logs, c("Level", "TimestampUTC", "Message", "Detail"))
 
 
-
   lf <- open_log("test", 2)
 
   expect_true(file_access(lf, "write"))
 
   for (i in 1:3) {
     Sys.sleep(1)
-    expect_equal(lf, log_err(msg = "My error Message",
-                             add = "Error information from R"))
+    expect_equal(lf, log_err(
+      msg = "My error Message",
+      add = "Error information from R"
+    ))
     expect_equal(lf, log_err(msg = "My error Message"))
     expect_equal(lf, log_err())
 
-    expect_equal(lf, log_wrn(msg = "My Warning Message",
-                             add = "Warning information from R"))
+    expect_equal(lf, log_wrn(
+      msg = "My Warning Message",
+      add = "Warning information from R"
+    ))
     expect_equal(lf, log_wrn(msg = "My Warning Message"))
     expect_equal(lf, log_wrn())
 
-    expect_equal(lf, log_inf(msg = "My Info Message",
-                             add = "Warning information from R"))
+    expect_equal(lf, log_inf(
+      msg = "My Info Message",
+      add = "Warning information from R"
+    ))
     expect_equal(lf, log_inf(msg = "My Info Message"))
     expect_equal(lf, log_inf())
 
-    expect_equal(lf, log_suc(msg = "My Success Message",
-                             add = "Success information from R"))
+    expect_equal(lf, log_suc(
+      msg = "My Success Message",
+      add = "Success information from R"
+    ))
     expect_equal(lf, log_suc(msg = "My Success Message"))
-    expect_equal(lf, log_suc(msg = "success",
-                             "split this|into|various|details"))
+    expect_equal(lf, log_suc(
+      msg = "success",
+      "split this|into|various|details"
+    ))
   }
 
 
