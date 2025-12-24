@@ -105,4 +105,4 @@ When preparing a CRAN release:
 
 CRAN submissions should be spaced **2+ months apart** unless addressing critical bugs.
 
-See [`AGENTS.md`](AGENTS.md) for detailed release management guidelines.
+See [`AGENTS.md`](https://github.com/r-data-science/rdstools/blob/main/AGENTS.md) for detailed release management guidelines.
