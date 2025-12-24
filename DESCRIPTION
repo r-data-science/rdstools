@@ -26,13 +26,21 @@ Imports:
 Depends: 
     R (>= 4.1)
 Suggests:
-    spelling,
     covr,
     devtools,
     fs,
     jsonlite,
+    knitr,
+    lubridate,
+    quarto,
     R.utils,
-    testthat
+    remotes,
+    rmarkdown,
+    shiny,
+    spelling,
+    testthat,
+    withr
 License: GPL (>= 3)
 Config/testthat/edition: 3
+VignetteBuilder: quarto
 Language: en-US

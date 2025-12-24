@@ -7,3 +7,5 @@
 A collection of functions to control RStudio IDE behavior, useful for
 mapping to keyboard shortcuts or Stream Deck buttons via RStudio addins.
 }
+\concept{rstudio-control}
+\concept{rstudio-shortcuts}

@@ -1,0 +1,777 @@
+---
+title: "Advanced Workflow"
+format: html
+execute:
+  eval: false
+vignette: >
+  %\VignetteIndexEntry{Advanced Workflow}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Log File Management Strategies
+
+### Pattern 1: Single Session Log
+
+Best for: Interactive analysis, one-off scripts
+
+```{r}
+library(rdstools)
+
+# One file per script execution
+timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+log_path <- paste0("logs/analysis_", timestamp, ".log")
+
+open_log(path = log_path)
+# Do work...
+close_log()
+```
+
+### Pattern 2: Daily Rolling Logs
+
+Best for: Production apps, Shiny servers
+
+```{r}
+# Log file named by date
+log_date <- Sys.Date()
+log_path <- paste0("/var/log/myapp/", log_date, ".log")
+
+# All sessions on the same day append to same file
+open_log(path = log_path, append = TRUE)
+```
+
+### Pattern 3: Job-Based Logging
+
+Best for: Batch processing, scheduled jobs
+
+```{r}
+# Group related logs by job ID
+job_id <- Sys.getenv("SLURM_JOB_ID", "local")
+
+open_log(fnam = "processing", jobId = job_id)
+# Creates: processing_job12345_timestamp.log
+
+# Multiple jobs write to separate files
+```
+
+### Pattern 4: Application-Wide Logging
+
+Best for: Multi-module Shiny apps
+
+```{r}
+# In app.R (main application file)
+Sys.setenv(RDSTOOLS_LOG_PATH = "logs/app.log")
+
+# Module 1
+open_log()  # Uses env var
+log_inf("Module 1 loaded")
+
+# Module 2 (different file)
+if (!log_is_active()) {
+  open_log()  # Reattach if needed
+}
+log_inf("Module 2 loaded")
+
+# Both modules write to same file
+```
+
+## Log Rotation and Archiving
+
+### Manual Rotation
+
+```{r}
+library(fs)
+
+rotate_logs <- function(log_dir, max_age_days = 30) {
+  log_files <- dir_ls(log_dir, glob = "*.log")
+
+  for (log_file in log_files) {
+    file_age <- as.numeric(Sys.time() - file_info(log_file)$modification_time, units = "days")
+
+    if (file_age > max_age_days) {
+      # Archive old log
+      archive_path <- path(log_dir, "archive", path_file(log_file))
+      dir_create(path_dir(archive_path))
+      file_move(log_file, archive_path)
+
+      log_inf("Archived log", add = path_file(log_file))
+    }
+  }
+}
+
+# Run weekly
+rotate_logs("/var/log/myapp", max_age_days = 30)
+```
+
+### Automated Rotation (cron)
+
+```bash
+# Add to crontab (Linux/Mac)
+# Rotate logs daily at midnight
+0 0 * * * Rscript -e "rdstools_rotate_logs.R"
+```
+
+## Custom Log Parsing
+
+### Extract Specific Information
+
+```{r}
+library(rdstools)
+library(data.table)
+
+# Read logs
+logs <- read_logs(lf = "logs/production.log")
+
+# Find slow operations (custom detail parsing)
+slow_ops <- logs[
+  stringr::str_detect(detail, "Duration:"),
+  .(
+    message,
+    duration = as.numeric(stringr::str_extract(detail, "\\d+\\.\\d+"))
+  )
+][duration > 5]  # Operations taking > 5 seconds
+
+# Errors by hour
+error_by_hour <- logs[
+  level == "ERR",
+  .(count = .N),
+  by = .(hour = lubridate::hour(timestamp))
+]
+```
+
+### Custom Detail Separator
+
+```{r}
+# If logs use custom separator
+logs <- read_logs(
+  lf = "custom.log",
+  detail_parse = TRUE,
+  detail_sep = "::"  # Instead of default "|"
+)
+```
+
+## RStudio Addins: Advanced Configuration
+
+### Creating Custom Addins
+
+You can extend rdstools functions into your own addins:
+
+**File**: `inst/rstudio/addins.dcf`
+
+```
+Name: My Custom Workflow
+Description: Run tests and check package
+Binding: my_custom_workflow
+Interactive: false
+```
+
+**File**: `R/my-addins.R`
+
+```{r}
+my_custom_workflow <- function() {
+  rdstools::test_package()
+  rdstools::check_package()
+  rdstools::pkg_coverage()
+}
+```
+
+### Stream Deck Configuration
+
+**Hardware**: Elgato Stream Deck (15 keys, 32 keys, or XL)
+
+**Setup**:
+
+1. Install Stream Deck software
+2. Create a profile for "R Development"
+3. Add buttons for each rdstools function
+4. Configure each button to send keyboard shortcut
+5. Add icons (download from RStudio/Font Awesome)
+
+**Example Layout**:
+
+```
+┌─────┬─────┬─────┬─────┬─────┐
+│ ⬛ │ 🔄 │ ⚙️ │ ✅ │ 📊 │  Row 1: Development
+│ Term│ Rest│ Load│ Test│ Cov │
+├─────┼─────┼─────┼─────┼─────┤
+│ 💻 │ 📝 │ 🔨 │ 🌙 │ ☀️ │  Row 2: IDE Control
+│ Cons│ Edit│ Build│ Dark│Light│
+└─────┴─────┴─────┴─────┴─────┘
+```
+
+### Multi-Monitor Layouts
+
+```{r}
+# Create custom layout function
+my_layout <- function() {
+  # Set 3-column layout
+  rdstools::layout_three_column()
+
+  # Activate terminal
+  rdstools::activate_terminal()
+
+  # Apply dark theme
+  rdstools::switch_theme_dark()
+}
+
+# Map to keyboard shortcut via addin
+```
+
+## Coverage Reporting Workflows
+
+### Interactive Coverage Reports
+
+```{r}
+library(rdstools)
+
+# Run coverage (opens HTML report)
+pkg_coverage()
+
+# Returns coverage object
+cov <- pkg_coverage()
+
+# Inspect specific files
+covr::file_coverage("R/log_funs.R", "tests/testthat/test-log_funs.R")
+
+# Check if coverage meets threshold
+coverage_pct <- covr::percent_coverage(cov)
+if (coverage_pct < 80) {
+  warning("Coverage below 80%: ", coverage_pct, "%")
+}
+```
+
+### CI/CD Integration
+
+**GitHub Actions** (`.github/workflows/test-coverage.yaml`):
+
+```yaml
+name: test-coverage
+
+on: [push, pull_request]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: r-lib/actions/setup-r@v2
+
+      - name: Install dependencies
+        run: |
+          install.packages(c("covr", "remotes"))
+          remotes::install_deps(dependencies = TRUE)
+        shell: Rscript {0}
+
+      - name: Test coverage
+        run: |
+          cov <- covr::package_coverage()
+          print(cov)
+          covr::to_cobertura(cov)
+        shell: Rscript {0}
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v3
+```
+
+## Logging in Production
+
+### Error Monitoring
+
+```{r}
+# Custom error handler with logging
+safe_operation <- function() {
+  tryCatch(
+    {
+      # Risky operation
+      result <- potentially_failing_function()
+      log_suc("Operation succeeded")
+      result
+    },
+    error = function(e) {
+      log_err("Operation failed", add = conditionMessage(e))
+
+      # Alert monitoring system
+      if (Sys.getenv("ENABLE_ALERTS") == "true") {
+        send_alert(paste("Error:", conditionMessage(e)))
+      }
+
+      NULL  # Return fallback value
+    }
+  )
+}
+```
+
+### Performance Monitoring
+
+```{r}
+# Log execution time
+timed_operation <- function() {
+  start_time <- Sys.time()
+  log_inf("Starting expensive operation")
+
+  # Do work
+  result <- expensive_computation()
+
+  duration <- as.numeric(Sys.time() - start_time, units = "secs")
+  log_suc("Operation complete", add = paste("Duration:", round(duration, 2), "sec"))
+
+  if (duration > 10) {
+    log_wrn("Operation slower than expected", add = paste(duration, "sec"))
+  }
+
+  result
+}
+```
+
+### Multi-Process Logging
+
+```{r}
+library(parallel)
+
+# Parent process
+Sys.setenv(RDSTOOLS_LOG_PATH = "logs/parallel_jobs.log")
+open_log()
+log_ini("Starting parallel processing")
+
+# Launch workers
+results <- mclapply(1:4, function(i) {
+  # Each worker reopens the log
+  if (!log_is_active()) {
+    open_log()
+  }
+
+  log_inf(paste("Worker", i, "started"))
+  Sys.sleep(runif(1, 1, 3))
+  log_suc(paste("Worker", i, "complete"))
+
+  i * 2
+}, mc.cores = 4)
+
+close_log()
+```
+
+## Theme Management
+
+### Custom Theme Collections
+
+```{r}
+# Define your own theme sets
+my_dark_themes <- c(
+  "Tomorrow Night",
+  "Dracula",
+  "Nord"
+)
+
+my_light_themes <- c(
+  "Tomorrow",
+  "Solarized Light"
+)
+
+# Custom switcher
+switch_my_theme <- function(type = "dark") {
+  themes <- if (type == "dark") my_dark_themes else my_light_themes
+  selected <- sample(themes, 1)
+  rstudioapi::applyTheme(selected)
+  message("Applied theme: ", selected)
+}
+```
+
+### Time-Based Theme Switching
+
+```{r}
+# Auto-switch based on time of day
+auto_theme <- function() {
+  hour <- as.numeric(format(Sys.time(), "%H"))
+
+  if (hour >= 6 && hour < 18) {
+    # Daytime: light theme
+    rdstools::switch_theme_light()
+  } else {
+    # Evening/night: dark theme
+    rdstools::switch_theme_dark()
+  }
+}
+
+# Run on session start
+if (interactive()) {
+  auto_theme()
+}
+```
+
+## Debugging Techniques
+
+### Reproducible Bug Reports
+
+```{r}
+# When reporting a bug, include:
+
+# 1. Session info
+sessionInfo()
+
+# 2. Problematic data (using catcall)
+catcall(problematic_data)
+
+# 3. Relevant logs
+log_data <- read_logs()
+log_data[level %in% c("ERR", "WRN")]
+
+# 4. Expected vs actual behavior
+cat("Expected: ...\n")
+cat("Actual: ...\n")
+```
+
+### Debugging Package Code
+
+```{r}
+library(rdstools)
+
+# Load package in development mode
+load_all_code()
+
+# Set breakpoint (RStudio)
+# Click left of line number in source file
+
+# Run code that hits breakpoint
+my_function()
+
+# Debugger opens at breakpoint
+# Use: n (next), s (step into), c (continue), Q (quit)
+```
+
+## CI/CD Patterns
+
+### GitHub Actions with Logging
+
+```yaml
+name: Run Analysis
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Run analysis with logging
+        run: |
+          library(rdstools)
+
+          Sys.setenv(RDSTOOLS_LOG_PATH = "workflow.log")
+          open_log()
+
+          source("analysis.R")
+
+          close_log()
+        shell: Rscript {0}
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: failure-logs
+          path: workflow.log
+```
+
+## Troubleshooting
+
+### Log File Permission Errors
+
+**Problem**: Can't write to log file
+
+**Solutions**:
+
+```{r}
+# Check file permissions
+fs::file_info("logs/app.log")$permissions
+
+# Ensure directory is writable
+dir <- "logs"
+if (!fs::dir_exists(dir)) {
+  fs::dir_create(dir)
+}
+
+# Use temp directory as fallback
+tryCatch(
+  open_log(path = "logs/app.log"),
+  error = function(e) {
+    warning("Can't write to logs/, using temp directory")
+    open_log(fnam = "app")  # Falls back to tempdir()
+  }
+)
+```
+
+### RStudio API Not Available
+
+**Problem**: `ensure_rstudio_available()` error in non-RStudio environments
+
+**Solution**:
+
+```{r}
+# Conditional execution
+if (rstudioapi::isAvailable()) {
+  rdstools::activate_terminal()
+} else {
+  message("RStudio not detected, skipping IDE shortcuts")
+}
+```
+
+### Suggested Package Not Installed
+
+**Problem**: Functions fail because suggested packages aren't available
+
+**Solution**: All rdstools functions check with `requireNamespace()`:
+
+```{r}
+# This is handled internally
+rdstools::pkg_coverage()
+# If covr not installed: "Package 'covr' is required but not installed."
+
+# Install suggested packages
+install.packages(c("covr", "fs", "jsonlite", "R.utils", "devtools"))
+```
+
+## Performance Considerations
+
+### Logging Overhead
+
+**File I/O costs**:
+- Console-only logging: negligible
+- File logging: ~0.1-1ms per log call
+- Network logging: 10-100ms per call
+
+**Recommendations**:
+
+```{r}
+# DON'T log inside tight loops
+for (i in 1:10000) {
+  # ❌ Bad: 10,000 file writes
+  log_inf(paste("Processing row", i))
+}
+
+# DO log at checkpoints
+for (i in seq(1, 10000, by = 1000)) {
+  # ✅ Good: 10 file writes
+  log_inf(paste("Processed", i, "rows"))
+}
+```
+
+### Log File Growth
+
+**Problem**: Log files grow unbounded
+
+**Solution**: Implement rotation
+
+```{r}
+# Check log file size before opening
+log_path <- "/var/log/myapp/current.log"
+
+if (fs::file_exists(log_path)) {
+  size_mb <- fs::file_info(log_path)$size / 1e6
+
+  if (size_mb > 100) {
+    # Rotate
+    archive_path <- paste0("/var/log/myapp/archive/", Sys.Date(), ".log")
+    fs::file_move(log_path, archive_path)
+    log_inf("Rotated log file", add = paste(size_mb, "MB archived"))
+  }
+}
+
+open_log(path = log_path, append = TRUE)
+```
+
+## Advanced RStudio Integration
+
+### Custom Pane Layouts for Different Tasks
+
+```{r}
+# Data analysis layout
+analysis_layout <- function() {
+  rdstools::layout_two_column()
+  rdstools::activate_source_editor()
+  rdstools::switch_theme_light()
+}
+
+# Package development layout
+dev_layout <- function() {
+  rdstools::layout_three_column()
+  rdstools::activate_terminal()
+  rdstools::switch_theme_dark()
+}
+
+# Bind to shortcuts
+```
+
+### Session Restart Patterns
+
+```{r}
+# Quick restart workflow
+restart_and_reload <- function() {
+  # Save current state
+  save.image(".RData.restart")
+
+  # Restart session
+  rdstools::restart_session(clean = TRUE)
+
+  # In new session:
+  # load(".RData.restart")
+}
+
+# Development restart
+restart_dev <- function() {
+  rdstools::document_package()
+  rdstools::restart_session()
+  # Auto-runs .Rprofile which calls pkgload::load_all()
+}
+```
+
+## Testing Strategies
+
+### Testing with Logs
+
+```{r}
+test_that("operation logs correctly", {
+  # Use temp log for testing
+  temp_log <- withr::local_tempfile(fileext = ".log")
+
+  open_log(path = temp_log)
+
+  # Run code
+  my_function()
+
+  # Close and read logs
+  log_data <- close_log(gather = TRUE)
+
+  # Verify log entries
+  expect_true("INI" %in% log_data$level)
+  expect_true("SUC" %in% log_data$level)
+  expect_equal(log_data[level == "ERR", .N], 0)
+})
+```
+
+### Testing RStudio Functions
+
+```{r}
+test_that("restart_session works in RStudio", {
+  skip_if_not(rstudioapi::isAvailable(), "RStudio not available")
+
+  # This will actually restart the session during tests
+  # Usually skip in automated CI
+  skip_on_ci()
+
+  expect_silent(rdstools::restart_session())
+})
+```
+
+## Integration Examples
+
+### Shiny App with Full Logging
+
+```{r}
+library(shiny)
+library(rdstools)
+
+ui <- fluidPage(
+  titlePanel("Logged Application"),
+  sidebarLayout(
+    sidebarPanel(
+      actionButton("process", "Process Data"),
+      downloadButton("download_logs", "Download Logs")
+    ),
+    mainPanel(
+      verbatimTextOutput("log_display")
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  # Open session log
+  session_log <- tempfile(fileext = ".log")
+  open_log(path = session_log)
+  log_ini("Session started", add = paste("User:", session$user))
+
+  # Cleanup on exit
+  onStop(function() {
+    log_end("Session ended")
+    close_log()
+  })
+
+  # Log user actions
+  observeEvent(input$process, {
+    log_inf("Process button clicked")
+
+    tryCatch({
+      # Process data
+      result <- process_data()
+      log_suc("Processing complete", add = paste(nrow(result), "rows"))
+    }, error = function(e) {
+      log_err("Processing failed", add = conditionMessage(e))
+    })
+  })
+
+  # Download logs
+  output$download_logs <- downloadHandler(
+    filename = function() {
+      paste0("session_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".log")
+    },
+    content = function(file) {
+      file.copy(session_log, file)
+    }
+  )
+
+  # Display recent logs
+  output$log_display <- renderText({
+    invalidateLater(1000)  # Refresh every second
+
+    if (log_is_active()) {
+      logs <- read_logs()
+      paste(logs$message, collapse = "\n")
+    } else {
+      "No active log"
+    }
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### Package Development Workflow
+
+```{r}
+# Complete development cycle
+develop_feature <- function() {
+  # Document changes
+  rdstools::document_package()
+
+  # Run tests
+  test_result <- rdstools::test_package()
+
+  if (test_result$failed > 0) {
+    stop("Tests failed, fix before proceeding")
+  }
+
+  # Check coverage
+  cov <- rdstools::pkg_coverage()
+  if (covr::percent_coverage(cov) < 80) {
+    warning("Coverage below 80%, add more tests")
+  }
+
+  # Full check
+  check_result <- rdstools::check_package()
+
+  # Restart for clean slate
+  rdstools::restart_session(clean = TRUE)
+}
+```
+
+## Learn More
+
+- **Package Overview**: `vignette("rdstools")`
+- **Quickstart**: `vignette("quickstart")`
+- **Function Reference**: [Complete API Documentation](https://r-data-science.github.io/rdstools/reference/index.html)
+- **GitHub**: [Source Code & Issues](https://github.com/r-data-science/rdstools)

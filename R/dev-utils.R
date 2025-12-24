@@ -2,6 +2,10 @@
 #'
 #' @param ... arguments to covr::codecov
 #'
+#' @family development
+#' @concept development
+#' @concept testing
+#'
 #' @name dev-utils
 NULL
 

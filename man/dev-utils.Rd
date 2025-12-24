@@ -24,3 +24,5 @@ Set the option \code{rdstools.mock_rstudio_available} to \code{TRUE} and provide
 \item \code{report_coverage()}: Run package coverage and upload report
 
 }}
+\concept{development}
+\concept{testing}

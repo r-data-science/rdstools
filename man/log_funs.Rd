@@ -136,3 +136,4 @@ log_err(msg = "My error Message", add = "Error information from R")
 log_err(msg = "My error Message")
 
 }
+\concept{logging}

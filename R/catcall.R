@@ -7,6 +7,9 @@
 #'
 #' @importFrom stringr str_sub str_length
 #'
+#' @family debugging
+#' @concept debugging
+#'
 #' @examples
 #' # Print the code to recreate a vector
 #' x <- 1:3

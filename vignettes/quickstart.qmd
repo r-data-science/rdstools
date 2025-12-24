@@ -1,0 +1,306 @@
+---
+title: "Quickstart"
+format: html
+execute:
+  eval: false
+vignette: >
+  %\VignetteIndexEntry{Quickstart}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Installation
+
+```{r}
+# From GitHub (latest development version)
+remotes::install_github("r-data-science/rdstools")
+
+# From CRAN (once accepted)
+install.packages("rdstools")
+```
+
+## Logging: 5-Minute Tutorial
+
+### Basic Console Logging
+
+```{r}
+library(rdstools)
+
+# Different log levels with colors
+log_inf("Processing started")           # Blue
+log_suc("Connection established")       # Green
+log_wrn("Deprecation warning")          # Yellow
+log_err("Validation failed")            # Red
+```
+
+### Logging to Files
+
+```{r}
+library(rdstools)
+
+# Open a log file
+open_log(fnam = "myapp")
+# Output: Log file opened at /tmp/RtmpXXXX/myapp_20251223_143000.log
+
+# Log as usual - now goes to both console and file
+log_ini("Application started")
+log_inf("Loading configuration")
+log_suc("Database connected")
+
+# Do work...
+data <- data.table::fread("data.csv")
+log_inf("Loaded dataset", add = paste(nrow(data), "rows"))
+
+# Close and optionally gather logs
+log_data <- close_log(gather = TRUE)
+
+# Analyze logs
+log_data[level == "ERR"]  # Find errors
+log_data[, difftime(timestamp[.N], timestamp[1])]  # Total duration
+```
+
+### Production Logging
+
+```{r}
+# Set log path via environment variable (before starting app)
+Sys.setenv(RDSTOOLS_LOG_PATH = "/var/log/myapp/session.log")
+
+# Open log (uses env var automatically)
+open_log()
+
+# Application runs...
+log_inf("Request received", add = "User: alice@example.com")
+log_inf("Query executed", add = "Duration: 0.3s")
+
+# Log persists to /var/log/myapp/session.log
+```
+
+## RStudio Shortcuts: 5-Minute Setup
+
+### Step 1: Identify Your Most-Used Operations
+
+Common developer workflows:
+
+- Switching between terminal/console/editor
+- Restarting R session
+- Running tests
+- Building documentation
+- Checking package
+
+### Step 2: Assign Keyboard Shortcuts
+
+In RStudio:
+
+1. **Tools > Modify Keyboard Shortcuts**
+2. Search for "rdstools"
+3. Assign shortcuts to your preferences:
+
+| Function | Suggested Shortcut | Purpose |
+|----------|-------------------|---------|
+| `activate_terminal` | `Ctrl+Shift+T` | Jump to terminal |
+| `activate_console` | `Ctrl+Shift+C` | Jump to console |
+| `restart_session` | `Ctrl+Shift+R` | Restart R |
+| `test_package` | `Ctrl+Shift+T` | Run tests |
+| `check_package` | `Ctrl+Shift+K` | Run R CMD check |
+
+4. Click Apply
+
+### Step 3: Test Your Shortcuts
+
+Press your assigned keys - the IDE should respond immediately!
+
+### Stream Deck Integration
+
+1. Set keyboard shortcuts in RStudio (above)
+2. In Stream Deck app, create buttons that trigger those keyboard combinations
+3. Add icons and labels
+4. Now you have one-button access to all operations
+
+**Why this helps**: Eliminates context-switching. Stay in flow state while developing.
+
+## Debugging with catcall()
+
+### Problem: Sharing Reproducible Examples
+
+When asking for help or reporting bugs, you need to share data structures. Manual copy/paste is error-prone.
+
+### Solution: catcall()
+
+```{r}
+library(rdstools)
+
+# You're debugging this object
+my_data <- data.table::data.table(
+  user_id = c(1, 2, 3),
+  name = c("Alice", "Bob", "Carol"),
+  active = c(TRUE, FALSE, TRUE)
+)
+
+# Generate reproducible code
+catcall(my_data)
+```
+
+**Output** (copy/paste ready):
+```r
+data.table::data.table(
+  user_id = c(1, 2, 3),
+  name = c("Alice", "Bob", "Carol"),
+  active = c(TRUE, FALSE, TRUE)
+)
+```
+
+**Use cases**:
+- GitHub issue reports
+- Stack Overflow questions
+- Slack/email discussions
+- Documentation examples
+
+## Common Workflows
+
+### Workflow 1: Data Pipeline with Logging
+
+```{r}
+library(rdstools)
+library(data.table)
+
+# Start logging
+open_log(fnam = "pipeline")
+log_ini("Pipeline started")
+
+# Load data
+log_inf("Loading input data")
+DT <- fread("input.csv")
+log_suc("Loaded data", add = paste(nrow(DT), "rows"))
+
+# Process
+log_inf("Applying transformations")
+DT[, processed := value * 2]
+log_suc("Transformations complete")
+
+# Validate
+if (any(is.na(DT$processed))) {
+  log_wrn("NA values detected", add = paste(sum(is.na(DT$processed)), "rows"))
+}
+
+# Save
+log_inf("Writing output")
+fwrite(DT, "output.csv")
+log_suc("Pipeline complete")
+
+# Close log
+close_log()
+```
+
+### Workflow 2: Package Development with Shortcuts
+
+```{r}
+library(rdstools)
+
+# Make code changes...
+
+# Quick development cycle (via keyboard shortcuts)
+load_all_code()        # Load changes
+document_package()     # Update docs
+test_package()         # Run tests
+check_package()        # Full check
+pkg_coverage()         # Coverage report
+
+# All without touching the mouse!
+```
+
+### Workflow 3: Shiny App with Session Logs
+
+```{r}
+library(shiny)
+library(rdstools)
+
+# Set log path
+Sys.setenv(RDSTOOLS_LOG_PATH = "logs/shiny_app.log")
+
+ui <- fluidPage(
+  titlePanel("My App"),
+  verbatimTextOutput("status")
+)
+
+server <- function(input, output, session) {
+  # Open log when session starts
+  open_log()
+  log_ini("Shiny session started", add = paste("User:", session$user))
+
+  # Ensure cleanup on exit
+  onStop(function() {
+    log_end("Shiny session ended")
+    close_log()
+  })
+
+  output$status <- renderText({
+    log_inf("Rendering status")
+    "Application running"
+  })
+}
+
+shinyApp(ui, server)
+```
+
+**Result**: Every user session gets logged with timestamps, making it easy to debug issues or track usage.
+
+## Tips & Best Practices
+
+### Log Levels Guide
+
+| Function | When to Use | Example |
+|----------|-------------|---------|
+| `log_ini()` | Workflow start | "Pipeline started" |
+| `log_end()` | Workflow completion | "Processing complete" |
+| `log_inf()` | Progress updates | "Loaded 1000 records" |
+| `log_suc()` | Successful operations | "Database connected" |
+| `log_wrn()` | Recoverable issues | "Missing values detected" |
+| `log_err()` | Errors (non-fatal) | "API request failed" |
+
+### When to Open vs Close Logs
+
+**Long-running apps** (Shiny, APIs):
+- Open log at app start
+- Keep it open during entire session
+- Close on shutdown
+
+**Batch scripts** (data pipelines):
+- Open log at script start
+- Close at script end
+- One log file per execution
+
+**Interactive development**:
+- Don't open log files (console only)
+- Use log functions for colored output
+- No file overhead during exploration
+
+### Log File Management
+
+```{r}
+# List all log files in a directory
+list.files("/var/log/myapp", pattern = "\\.log$")
+
+# Read old logs
+old_logs <- read_logs(lf = "/var/log/myapp/previous_session.log")
+old_logs[level == "ERR"]  # Find past errors
+
+# Archive logs
+file.copy(
+  from = "/var/log/myapp/current.log",
+  to = paste0("/var/log/archive/", Sys.Date(), ".log")
+)
+```
+
+## Next Steps
+
+- **Get Started**: See `vignette("rdstools")` for package overview
+- **Advanced Workflow**: See `vignette("advanced-workflow")` for:
+  - Log rotation strategies
+  - Custom log parsers
+  - CI/CD integration
+  - RStudio addin development
+
+## Learn More
+
+- [Function Reference](https://r-data-science.github.io/rdstools/reference/index.html) - Complete API docs
+- [GitHub Issues](https://github.com/r-data-science/rdstools/issues) - Report bugs or request features

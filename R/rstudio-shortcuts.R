@@ -3,6 +3,10 @@
 #' A collection of functions to control RStudio IDE behavior, useful for
 #' mapping to keyboard shortcuts or Stream Deck buttons via RStudio addins.
 #'
+#' @family rstudio-shortcuts
+#' @concept rstudio-shortcuts
+#' @concept rstudio-control
+#'
 #' @name rstudio-shortcuts
 #' @import rstudioapi
 NULL

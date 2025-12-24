@@ -1,0 +1,75 @@
+url: https://r-data-science.github.io/rdstools
+
+template:
+  bootstrap: 5
+  light-switch: true
+
+development:
+  mode: auto
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github, lightswitch]
+  components:
+    intro:
+      text: Get started
+      href: articles/rdstools.html
+    articles:
+      text: Articles
+      menu:
+      - text: Quickstart
+        href: articles/quickstart.html
+      - text: Advanced Workflow
+        href: articles/advanced-workflow.html
+
+reference:
+  - title: "Logging Functions"
+    desc: "Color-coded console logs with persistent file output"
+    contents:
+      - has_concept("logging")
+
+  - title: "RStudio IDE Control"
+    desc: "Functions for controlling RStudio IDE behavior"
+    contents:
+      - has_concept("rstudio-shortcuts")
+      - has_concept("rstudio-control")
+
+  - title: "Development Tools"
+    desc: "Package development and testing helpers"
+    contents:
+      - has_concept("development")
+      - has_concept("testing")
+
+  - title: "Debugging Utilities"
+    desc: "Tools for reproducible debugging and diagnostics"
+    contents:
+      - has_concept("debugging")
+
+articles:
+  - title: "Getting Started"
+    contents:
+      - rdstools
+
+  - title: "Guides"
+    contents:
+      - quickstart
+      - advanced-workflow
+
+news:
+  one_page: false
+  cran_dates: false
+
+footer:
+  structure:
+    left: developed_by
+    right: built_with
+
+home:
+  title: "rdstools • Data Science Development Tools for R"
+  description: >
+    Utilities for R data science workflows: persistent logging with color-coded console output,
+    RStudio IDE shortcuts for keyboard/Stream Deck mapping, and development helpers for coverage,
+    testing, and package building.
+  sidebar:
+    structure: [links, license, community, citation, authors, dev]
