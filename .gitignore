@@ -47,3 +47,4 @@ rdstools.Rcheck/
 rdstools*.tar.gz
 rdstools*.tgz
 .Rprofile
+docs/

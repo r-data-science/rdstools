@@ -17,3 +17,5 @@ Brings the console to the front and moves cursor focus to the console.
 activate_console()
 }
 }
+\concept{rstudio-control}
+\concept{rstudio-shortcuts}

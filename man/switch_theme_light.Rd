@@ -17,3 +17,5 @@ Convenience wrapper to apply a random light theme.
 switch_theme_light()
 }
 }
+\concept{rstudio-control}
+\concept{rstudio-shortcuts}

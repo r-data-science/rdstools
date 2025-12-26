@@ -23,3 +23,5 @@ restart_session()
 restart_session(clean = TRUE)
 }
 }
+\concept{development}
+\concept{rstudio-shortcuts}

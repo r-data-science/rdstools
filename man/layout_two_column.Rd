@@ -19,3 +19,5 @@ bottom-right is the files panel and related panes.
 layout_two_column()
 }
 }
+\concept{rstudio-control}
+\concept{rstudio-shortcuts}

@@ -20,3 +20,5 @@ Runs R CMD check on the package using devtools::check().
 check_package()
 }
 }
+\concept{development}
+\concept{testing}

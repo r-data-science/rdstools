@@ -17,3 +17,5 @@ Convenience wrapper to apply a random dark theme.
 switch_theme_dark()
 }
 }
+\concept{rstudio-control}
+\concept{rstudio-shortcuts}

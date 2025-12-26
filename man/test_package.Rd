@@ -20,3 +20,5 @@ Runs package tests using devtools::test().
 test_package()
 }
 }
+\concept{development}
+\concept{testing}

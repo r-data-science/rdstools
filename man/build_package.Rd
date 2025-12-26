@@ -20,3 +20,4 @@ Builds the package using devtools::build().
 build_package()
 }
 }
+\concept{development}

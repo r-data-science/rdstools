@@ -19,3 +19,5 @@ configuration to support multiple source columns.
 layout_four_column()
 }
 }
+\concept{rstudio-control}
+\concept{rstudio-shortcuts}

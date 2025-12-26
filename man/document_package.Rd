@@ -20,3 +20,4 @@ Runs devtools::document() to generate documentation.
 document_package()
 }
 }
+\concept{development}

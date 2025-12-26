@@ -17,3 +17,5 @@ A convenience function to run coverage report on the current package.
 pkg_coverage()
 }
 }
+\concept{development}
+\concept{testing}

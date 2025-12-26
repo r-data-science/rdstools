@@ -17,6 +17,8 @@ NULL
 #' to the terminal.
 #'
 #' @return Called for side effects; returns NULL invisibly.
+#' @concept rstudio-shortcuts
+#' @concept rstudio-control
 #' @export
 #' @examples
 #' \dontrun{
@@ -33,6 +35,8 @@ activate_terminal <- function() {
 #' Brings the console to the front and moves cursor focus to the console.
 #'
 #' @return Called for side effects; returns NULL invisibly.
+#' @concept rstudio-shortcuts
+#' @concept rstudio-control
 #' @export
 #' @examples
 #' \dontrun{
@@ -50,6 +54,8 @@ activate_console <- function() {
 #' this will focus the most recently active editor.
 #'
 #' @return Called for side effects; returns NULL invisibly.
+#' @concept rstudio-shortcuts
+#' @concept rstudio-control
 #' @export
 #' @examples
 #' \dontrun{
@@ -69,6 +75,8 @@ activate_source_editor <- function() {
 #' bottom-right is the files panel and related panes.
 #'
 #' @return Called for side effects; returns NULL invisibly.
+#' @concept rstudio-shortcuts
+#' @concept rstudio-control
 #' @export
 #' @examples
 #' \dontrun{
@@ -88,6 +96,8 @@ layout_two_column <- function() {
 #' configuration to support multiple source columns.
 #'
 #' @return Called for side effects; returns NULL invisibly.
+#' @concept rstudio-shortcuts
+#' @concept rstudio-control
 #' @export
 #' @examples
 #' \dontrun{
@@ -108,6 +118,8 @@ layout_three_column <- function() {
 #' configuration to support multiple source columns.
 #'
 #' @return Called for side effects; returns NULL invisibly.
+#' @concept rstudio-shortcuts
+#' @concept rstudio-control
 #' @export
 #' @examples
 #' \dontrun{
@@ -132,6 +144,8 @@ layout_four_column <- function() {
 #'   a random theme of the specified type is chosen.
 #'
 #' @return Called for side effects; returns NULL invisibly.
+#' @concept rstudio-shortcuts
+#' @concept rstudio-control
 #' @export
 #' @examples
 #' \dontrun{
@@ -189,6 +203,8 @@ switch_theme <- function(type = "dark", which = NULL) {
 #' Convenience wrapper to apply a random light theme.
 #'
 #' @return Called for side effects; returns NULL invisibly.
+#' @concept rstudio-shortcuts
+#' @concept rstudio-control
 #' @export
 #' @examples
 #' \dontrun{
@@ -203,6 +219,8 @@ switch_theme_light <- function() {
 #' Convenience wrapper to apply a random dark theme.
 #'
 #' @return Called for side effects; returns NULL invisibly.
+#' @concept rstudio-shortcuts
+#' @concept rstudio-control
 #' @export
 #' @examples
 #' \dontrun{
@@ -217,6 +235,8 @@ switch_theme_dark <- function() {
 #' A convenience function to run coverage report on the current package.
 #'
 #' @return Returns the coverage result object invisibly.
+#' @concept development
+#' @concept testing
 #' @export
 #' @examples
 #' \dontrun{
@@ -239,6 +259,8 @@ pkg_coverage <- function() {
 #' @param ... Additional arguments passed to rstudioapi::restartSession()
 #'
 #' @return Called for side effects; returns NULL invisibly.
+#' @concept rstudio-shortcuts
+#' @concept development
 #' @export
 #' @examples
 #' \dontrun{
@@ -258,6 +280,8 @@ restart_session <- function(clean = FALSE, ...) {
 #' @param ... Arguments passed to devtools::load_all()
 #'
 #' @return Returns the result from devtools::load_all() invisibly.
+#' @concept development
+#' @concept testing
 #' @export
 #' @examples
 #' \dontrun{
@@ -278,6 +302,7 @@ load_all_code <- function(...) {
 #' @param ... Arguments passed to devtools::document()
 #'
 #' @return Returns the result from devtools::document() invisibly.
+#' @concept development
 #' @export
 #' @examples
 #' \dontrun{
@@ -298,6 +323,7 @@ document_package <- function(...) {
 #' @param ... Arguments passed to devtools::build()
 #'
 #' @return Returns the path to the built package invisibly.
+#' @concept development
 #' @export
 #' @examples
 #' \dontrun{
@@ -318,6 +344,8 @@ build_package <- function(...) {
 #' @param ... Arguments passed to devtools::test()
 #'
 #' @return Returns the test results invisibly.
+#' @concept development
+#' @concept testing
 #' @export
 #' @examples
 #' \dontrun{
@@ -338,6 +366,8 @@ test_package <- function(...) {
 #' @param ... Arguments passed to devtools::check()
 #'
 #' @return Returns the check results invisibly.
+#' @concept development
+#' @concept testing
 #' @export
 #' @examples
 #' \dontrun{

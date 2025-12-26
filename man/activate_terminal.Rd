@@ -18,3 +18,5 @@ to the terminal.
 activate_terminal()
 }
 }
+\concept{rstudio-control}
+\concept{rstudio-shortcuts}

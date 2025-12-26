@@ -20,3 +20,5 @@ Loads all package code using devtools::load_all().
 load_all_code()
 }
 }
+\concept{development}
+\concept{testing}

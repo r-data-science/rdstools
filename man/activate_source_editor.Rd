@@ -18,3 +18,5 @@ this will focus the most recently active editor.
 activate_source_editor()
 }
 }
+\concept{rstudio-control}
+\concept{rstudio-shortcuts}

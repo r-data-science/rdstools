@@ -34,3 +34,5 @@ switch_theme(which = 2)
 switch_theme("light", 1)
 }
 }
+\concept{rstudio-control}
+\concept{rstudio-shortcuts}
