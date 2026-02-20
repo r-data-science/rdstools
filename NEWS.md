@@ -1,3 +1,19 @@
+# rdstools 0.3.2
+
+This release adds a package-dump helper tailored to LLM-driven tooling and
+extends test coverage for that workflow.
+
+## Highlights
+
+* Added `create_rdd()` to generate machine-readable package text artifacts via
+  `rdocdump::rdd_to_txt()` from either local package paths or CRAN package
+  names.
+* Added input validation and cache/output directory handling for `create_rdd()`
+  with environment variable fallbacks suitable for agent-based workflows.
+* Added tests for package dump generation, implicit cache cleanup behavior, and
+  argument validation.
+* Added `rdocdump` to `Suggests`.
+
 # rdstools 0.3.1
 
 This release focuses on production-grade logging so Shiny applications can fan

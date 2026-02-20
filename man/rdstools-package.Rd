@@ -2,14 +2,29 @@
 % Please edit documentation in R/rdstools-package.R
 \docType{package}
 \name{rdstools-package}
-\alias{rdstools}
 \alias{rdstools-package}
-\title{rdstools: Data Science Development Tools for 'R'}
+\alias{rdstools}
+\title{rdstools: Data Science Development Tools for R}
 \description{
-\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
-
-Utilities that support 'R' data-science project workflows by standardizing console logging, reproducible diagnostics, and package development tasks. The toolkit captures color-coded logs with persistent files, includes helpers to recreate data objects for debugging, automates coverage reporting for interactive sessions, and provides RStudio addins for common IDE operations that can be mapped to keyboard shortcuts.
+Utilities that support data-science workflows with helpers for structured
+logging, reproducible debugging, package development automation, and
+machine-readable package dumps for LLM-driven tooling.
 }
+\section{Feature Areas}{
+
+\itemize{
+  \item \strong{Logging}: Colorized console logging with optional persistent
+  file output via \code{open_log()}, \code{log_*()}, and \code{close_log()}.
+  \item \strong{Debugging}: Reproducible object reconstruction via
+  \code{catcall()}.
+  \item \strong{Development}: RStudio addins and wrappers for common
+  development commands (\code{document_package()}, \code{test_package()},
+  \code{check_package()}, and related helpers).
+  \item \strong{LLM package dumps}: \code{create_rdd()} generates package
+  text artifacts from source/docs/vignettes using \pkg{rdocdump}.
+}
+}
+
 \seealso{
 Useful links:
 \itemize{

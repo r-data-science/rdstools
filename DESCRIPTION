@@ -1,6 +1,6 @@
 Package: rdstools
 Title: Data Science Development Tools for 'R'
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: 
     person(given = "Bobby",
            family = "Fatemi",
@@ -34,6 +34,7 @@ Suggests:
     lubridate,
     quarto,
     R.utils,
+    rdocdump,
     remotes,
     rmarkdown,
     shiny,

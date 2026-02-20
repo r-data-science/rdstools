@@ -3,7 +3,7 @@
 
 <!-- badges: start -->
 [![lint](https://github.com/r-data-science/rdstools/actions/workflows/lint.yaml/badge.svg)](https://github.com/r-data-science/rdstools/actions/workflows/lint.yaml)
-[![CRAN status](https://www.r-pkg.org/badges/version/rdstools)](https://CRAN.R-project.org/package=rdstools)
+[![CRAN status](https://www.r-pkg.org/badges/version/rdstools)](https://cran.r-project.org/)
 <!-- badges: end -->
 
 For contributor workflow details, see [`AGENTS.md`](https://github.com/r-data-science/rdstools/blob/main/AGENTS.md).

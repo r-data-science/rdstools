@@ -3,6 +3,7 @@ CMD
 CRAN's
 Dev
 Elgato
+LLM
 Quickstart
 RStudio
 addin
@@ -12,8 +13,11 @@ covr
 cron
 devtools
 env
+fallbacks
+llm
 param
 parsers
+rdocdump
 restartSession
 rsthemes
 rstudio
