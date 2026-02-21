@@ -1,3 +1,4 @@
+CLI
 Addins
 CMD
 CRAN's
@@ -17,6 +18,7 @@ fallbacks
 llm
 param
 parsers
+quickstart
 rdocdump
 restartSession
 rsthemes

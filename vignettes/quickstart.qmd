@@ -75,6 +75,39 @@ log_inf("Query executed", add = "Duration: 0.3s")
 # Log persists to /var/log/myapp/session.log
 ```
 
+## Package Dumps for LLM Tools
+
+`create_rdd()` writes package docs/code/vignettes to a single text artifact that
+works well for LLM-assisted CLI workflows.
+
+```{r}
+library(rdstools)
+
+# Installed package
+out <- create_rdd("pkgdown")
+out
+
+# Optional preview
+readLines(out, n = 20)
+```
+
+```{r}
+# Local package directory
+out_local <- create_rdd(
+  pkg = "/path/to/local/package",
+  outdir = file.path(tempdir(), "llm-docs", "rdd"),
+  clean = FALSE
+)
+out_local
+```
+
+Behavior summary:
+
+- Package names preserve dots in output files (`R.utils` -> `R.utils.txt`)
+- Installed package names use local installed files
+- Uninstalled names are fetched from CRAN
+- Local directories/archives are read directly
+
 ## RStudio Shortcuts: 5-Minute Setup
 
 ### Step 1: Identify Your Most-Used Operations

@@ -1,3 +1,24 @@
+# Internal helper to keep output naming rules testable without requiring
+# rdocdump runs for every edge case.
+.create_rdd_output_stem <- function(pkg_input, is_local, is_local_file) {
+  pkg_name <- fs::path_file(pkg_input)
+  is_archive <- grepl("\\.(tar\\.gz|tgz|zip)$", pkg_name, ignore.case = TRUE)
+
+  # Preserve dots for package names (e.g. R.utils), only strip real archive/file
+  # extensions.
+  if (is_archive) {
+    pkg_name <- sub("\\.(tar\\.gz|tgz|zip)$", "", pkg_name, ignore.case = TRUE)
+  } else if (is_local && is_local_file) {
+    pkg_name <- tools::file_path_sans_ext(pkg_name)
+  }
+
+  if (!nzchar(pkg_name)) {
+    pkg_name <- "package"
+  }
+
+  pkg_name
+}
+
 #' Create a Machine-Readable Package Dump for LLM Tools
 #'
 #' Create a text artifact from package documentation, vignettes, and source code
@@ -15,6 +36,9 @@
 #' The output text includes docs, vignettes, and code (\code{content = "all"})
 #' and keeps both cached archive and extracted files
 #' (\code{keep_files = "both"}).
+#' Output filenames preserve package names as-is (for example,
+#' \code{R.utils -> R.utils.txt}) and remove archive suffixes for local archives
+#' (for example, \code{mypkg_1.0.0.tar.gz -> mypkg_1.0.0.txt}).
 #' Set \code{clean = TRUE} with implicit cache selection to remove temporary
 #' cache files when the function exits.
 #'
@@ -54,7 +78,7 @@
 #' out_env <- create_rdd("rdstools")
 #' readLines(out_env, n = 5)
 #' }
-#'
+
 #' @export
 create_rdd <- function(pkg, cachedir = NULL, outdir = NULL, clean = TRUE) {
   if (!requireNamespace("fs", quietly = TRUE)) {
@@ -118,6 +142,7 @@ create_rdd <- function(pkg, cachedir = NULL, outdir = NULL, clean = TRUE) {
       fs::path_abs() |>
       fs::path_norm()
   }
+  is_local_file <- is_local && fs::file_exists(pkg_input)
 
   looks_like_path <- grepl("[/\\\\]", pkg) ||
     grepl("\\.tar\\.gz$", pkg, ignore.case = TRUE)
@@ -150,15 +175,7 @@ create_rdd <- function(pkg, cachedir = NULL, outdir = NULL, clean = TRUE) {
     fs::path_norm()
   fs::dir_create(output_dir, recurse = TRUE)
 
-  pkg_name <- fs::path_file(pkg_input)
-  if (grepl("\\.tar\\.gz$", pkg_name, ignore.case = TRUE)) {
-    pkg_name <- sub("\\.tar\\.gz$", "", pkg_name, ignore.case = TRUE)
-  } else {
-    pkg_name <- tools::file_path_sans_ext(pkg_name)
-  }
-  if (!nzchar(pkg_name)) {
-    pkg_name <- "package"
-  }
+  pkg_name <- .create_rdd_output_stem(pkg_input, is_local, is_local_file)
 
   output_file <- fs::path(output_dir, paste0(pkg_name, ".txt"))
   result <- rdocdump::rdd_to_txt(

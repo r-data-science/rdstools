@@ -40,6 +40,9 @@ Package resolution follows this order:
 The output text includes docs, vignettes, and code (\code{content = "all"})
 and keeps both cached archive and extracted files
 (\code{keep_files = "both"}).
+Output filenames preserve package names as-is (for example,
+\code{R.utils -> R.utils.txt}) and remove archive suffixes for local archives
+(for example, \code{mypkg_1.0.0.tar.gz -> mypkg_1.0.0.txt}).
 Set \code{clean = TRUE} with implicit cache selection to remove temporary
 cache files when the function exits.
 }
@@ -63,7 +66,6 @@ Sys.setenv(AGENTS_SCRATCH = tempdir())
 out_env <- create_rdd("rdstools")
 readLines(out_env, n = 5)
 }
-
 }
 \seealso{
 Other development: 

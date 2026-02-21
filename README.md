@@ -84,6 +84,31 @@ Call `rdstools::close_log()` during shutdown to flush and close the file; the
 logging functions will continue to operate but fall back to console output if
 the file becomes unavailable.
 
+## Create Package Dumps for LLM Tools
+
+`rdstools::create_rdd()` creates a machine-readable `.txt` dump of package
+docs, code, and vignettes.
+
+```r
+# Installed package
+out <- rdstools::create_rdd("pkgdown")
+out
+
+# Local package directory
+out_local <- rdstools::create_rdd("/path/to/your/package")
+out_local
+```
+
+Key behavior:
+
+- `pkg` can be a package name, local package directory, or local archive.
+- If a package name is installed, local installed files are used.
+- If not installed, source is fetched from CRAN via `rdocdump`.
+- Default output folder resolves from `AGENTS_SCRATCH`, then `AGENTS_HOME`,
+  then `WS_ROOT`, then `HOME`, and appends `llm-docs/rdd`.
+- Output names preserve package names (for example, `R.utils` ->
+  `R.utils.txt`).
+
 ## Release Process
 
 This package uses a **tag-based release workflow** to support both CRAN releases and continuous platform development:

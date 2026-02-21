@@ -1,3 +1,14 @@
+# rdstools development
+
+## Highlights
+
+* Fixed `create_rdd()` output naming for package names with dots
+  (for example, `R.utils` now writes `R.utils.txt`).
+* Expanded `create_rdd()` test coverage for dotted package names, local package
+  directory output naming, and environment-variable output-root precedence.
+* Added end-user documentation for `create_rdd()` in `README.md` and the
+  quickstart vignette.
+
 # rdstools 0.3.2
 
 This release adds a package-dump helper tailored to LLM-driven tooling and
