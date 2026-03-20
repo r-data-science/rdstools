@@ -10,20 +10,24 @@ catcall(vec)
 \method{print}{rdstools_catcall}(x, ...)
 }
 \arguments{
-\item{vec}{print the call for this data to the console}
+\item{vec}{The data object whose construction code should be generated and inserted.}
 
 \item{x}{An object produced by \code{catcall()}.}
 
 \item{...}{Additional arguments passed to \code{print()}.}
 }
 \value{
-An object of class \code{rdstools_catcall} containing the deparsed expression.
+Invisibly returns an object of class \code{rdstools_catcall} containing
+  the deparsed expression. Called primarily for the side effect of inserting
+  text into the active RStudio document (or printing to the console).
 }
 \description{
-Print the code to construct data
+Generates the code to recreate a data object and inserts it directly into
+the active RStudio document at the current cursor position when RStudio is
+available. Falls back to printing to the console otherwise.
 }
 \examples{
-# Print the code to recreate a vector
+# Generate the code to recreate a vector (inserts into RStudio document when available)
 x <- 1:3
 catcall(x)
 
